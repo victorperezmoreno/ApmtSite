@@ -153,7 +153,7 @@
         <div id="top">
           <div id="logo">
             <a href="../Default">
-              <%--<img src="../App_Themes/Darkbrown/Logo/CoffeeLogo.png" /></a>--%>
+              <img src="../App_Themes/Darkbrown/Logo/SalonLogo.png" /></a>
           </div>
 
           <div id="social-media">
@@ -274,9 +274,9 @@
       </div>
        <div id="content">
         <asp:Label ID="Message" runat="server" CssClass="Attention" Text="Message to User" Visible="False"></asp:Label>
-        <asp:TextBox ID="TxtAppointmentSummary" CssClass="mainCalendar" runat="server" MaxLength="10" onblur="return validateAppointmentSummaryDate(this);" AutoPostBack="True" OnTextChanged="TxtSummaryDateChange"/>
+        <asp:TextBox ID="TxtAppointmentSummary"  CssClass="mainCalendar" runat="server" MaxLength="10" onblur="return validateAppointmentSummaryDate(this);" AutoPostBack="True" OnTextChanged="TxtSummaryDateChange"/>
         <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ControlToValidate="TxtAppointmentSummary" CssClass="ErrorMessage" Display="Dynamic" validationgroup="ScheduledAppointmentsGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
-        <asp:GridView ID="grdViewSchedule" runat="server" CssClass="ScheduleGridview" BorderStyle="Solid" RowStyle-CssClass="ColumnAuto">
+        <asp:GridView ID="grdViewSchedule" runat="server" CssClass="ScheduleGridview" RowStyle-CssClass="ColumnAuto">
         </asp:GridView>
       </div>
       </div>

@@ -171,7 +171,7 @@ code, pre        {background-color:#FF9; padding:2px 0px; margin:4px 25px;
 
 #leftside         {  }  
 
-#content          {/*float:left; width:650px; padding:20px;*/ margin-left:27%; min-height:300px; }  
+#content          {/*float:left; width:650px; padding:20px;*/ margin: 0 auto; margin-left:27%; min-height:300px; }  
 #content h1       {margin:0 0 20px 0; font-size: 32px; 
                    border-bottom:1px #777777 solid; padding:20px 0;}
 
@@ -348,14 +348,15 @@ br {clear:left;  }
 
 .mainCalendar 
 {
-  text-align: left;
+  text-align: center;
   vertical-align: middle;
-  border: 1px solid #e2e2e2;
+  border: 2px solid #c33803;
   border-radius: 5px;
   background: #FFFFFF;
   font-family: Verdana, Arial;
   font-size: 1.3em;
   width: 150px;
+  position:relative; display:block;
   margin: 3px auto;
 }
 
@@ -606,7 +607,10 @@ br {clear:left;  }
 .ScheduleGridview /** main grid */
 {
     width: 80%;
-    border: solid 2px #000000;
+    /*border: solid 2px #000000;*/
+    position:relative;
+    display:block;
+    margin: 0 auto;
 }
 
 .ScheduleGridview td /** text element **/
@@ -744,6 +748,8 @@ br {clear:left;  }
 {
   background-color: #c33803;
   color: white;
+  font-family:Verdana, Arial;
+  font-size: 1.3em;
   border: 1px solid black;
   padding: 4px;
 }
@@ -759,6 +765,8 @@ br {clear:left;  }
 {
   background-color: #808080;
   color: white;
+  font-family:Verdana, Arial;
+  font-size: 1.3em;
   border: 1px solid black;
   padding: 4px;
 }  
