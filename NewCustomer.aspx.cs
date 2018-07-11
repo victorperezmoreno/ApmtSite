@@ -24,8 +24,8 @@ public partial class NewCustomer : System.Web.UI.Page
 
       var Client = new ClientHair();
       Client.IdCustomer = 1; //arbitrary as i do not need the id for inserting new services
-      Client.FirstNameCustomer = Client.UppercaseFirstLetter(TxtFirstName.Text.ToLower().Trim());
-      Client.LastNameCustomer = Client.UppercaseFirstLetter(TxtLastName.Text.ToLower().Trim());
+      Client.FirstNameCustomer = ClientHair.UppercaseFirstLetter(TxtFirstName.Text.ToLower().Trim());
+      Client.LastNameCustomer = ClientHair.UppercaseFirstLetter(TxtLastName.Text.ToLower().Trim());
       Client.PhoneNumberCustomer = new string(TxtPhoneCell.Text.Trim().Where(char.IsDigit).ToArray());
       //Client.PhoneNumberCustomer = TxtPhoneCell.Text.Trim(); 
       Client.EmailCustomer = TxtEmail.Text.Trim();
