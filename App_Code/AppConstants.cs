@@ -12,6 +12,7 @@ public class AppConstants
   {
     public const string Forecolor = "#D8000C";
     public const string BackgroundColor = "#FFD2D2";
+    public const string AppointmentsDatasetEmpty = "No data in appointments tables";
   }
 
 	public AppConstants()

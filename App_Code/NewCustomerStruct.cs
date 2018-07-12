@@ -8,11 +8,6 @@ using System.Web;
 /// </summary>
 public class NewCustomerStruct
 {
-	public NewCustomerStruct()
-	{
-		
-	}
-
   public struct Client
   {
     public int id;
