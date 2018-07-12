@@ -20,16 +20,22 @@ public partial class _Default : System.Web.UI.Page
 
     private void PopulateGridWithAppointmentData(string dateSelected)
     {
-      if (VerifyThatAppointmentsExistForDateSelected(dateSelected) == true)
+      var dtSetAppointmentInformation = LoadAppointmentInformation(dateSelected);
+      if (dtSetAppointmentInformation.Tables.Count == 0)
       {
-        createTableSchedule(LoadAppointmentInformation(dateSelected));
+        AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, AppConstants.LblMessage.AppointmentsDatasetEmpty);
       }
       else
-      {
-        LblMessageToUser.Text = "There are no appointments for date selected";
-        LblMessageToUser.Visible = true;
-        //ClassLibrary.Popup.Message("There are no appointments for date selected");
-      }
+        {
+          if (dtSetAppointmentInformation.Tables.Count > 2)
+          {
+            CreateTableScheduleWhenAppointmentsBooked(dtSetAppointmentInformation);
+          }
+          else
+          {
+            CreateEmptyTableSchedule(dtSetAppointmentInformation);
+          }  
+        }
     }
 
     private DataSet LoadAppointmentInformation(string dateSelected)
@@ -59,85 +65,74 @@ public partial class _Default : System.Web.UI.Page
           str += "\n" + "Message:" + ex.Message;
           AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error reading from Database. Please try again.";
-          LblMessageToUser.Visible = true;
+          //LblMessageToUser.Visible = true;
         }
         finally
         {
           connection.Close();
         }
       }
-
       return dtSetAppointmentsPerSpecificDate;
     }
 
-    private bool VerifyThatAppointmentsExistForDateSelected(string requestedDate)
+    private void CreateEmptyTableSchedule(DataSet dtSetWithNoAppointments)
     {
-      bool availableAppointmentsForDateSelected = false;
-      /*Placed connection string in a class in App_Code  to improve DB connection callings*/
-      using (SqlConnection connection = HairStylistConnectionString.Connection())
+      //Create columns to display to user
+      var dtTableFinalScheduleToDisplay = AddColumnsToTableScheduleToDisplay(dtSetWithNoAppointments);
+      //Create the rows with time frames starting at 10 AM and ending at 7 PM
+      AddRowsToEmptyTableScheduleToDisplay(dtSetWithNoAppointments, dtTableFinalScheduleToDisplay);
+      //Bind data loaded in table to appointments grid
+      grdViewSchedule.DataSource = dtTableFinalScheduleToDisplay;
+      grdViewSchedule.DataBind();
+    }
+
+    private static void AddRowsToEmptyTableScheduleToDisplay(DataSet dtSetAppointmentsData, DataTable dtTableFinalScheduleToDisplay)
+    {
+      var dtTableStylistList = dtSetAppointmentsData.Tables[0];
+      var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
+      DataRow drTimeSlotData;
+      for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
       {
-        try
-        {
-          //StoredPro_RetrieveAppointmentDetails       
-          var command = new SqlCommand("StoredPro_VerifyAppointmentsExistForDateSelected", connection);
-          command.CommandType = CommandType.StoredProcedure;
-
-          command.Parameters.Add("@AppointmentDate", SqlDbType.NVarChar, 10).Value = requestedDate;
-          command.Parameters.Add("@NoRows", SqlDbType.TinyInt).Direction = ParameterDirection.Output;
-
-          connection.Open();
-          command.ExecuteNonQuery();
-          availableAppointmentsForDateSelected = Convert.ToBoolean(command.Parameters["@NoRows"].Value);
-
-          command.Dispose();
-        }
-        catch (System.Data.SqlClient.SqlException ex)
-        {
-          string str;
-          str = "Source:" + ex.Source;
-          str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error reading from Database. Please try again.";
-          LblMessageToUser.Visible = true;
-        }
-        finally
-        {
-          connection.Close();
-        }
+        drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
+        drTimeSlotData["No"] = dtTableWorkingHours.Rows[timeSlot]["Id"];
+        drTimeSlotData["Time"] = dtTableWorkingHours.Rows[timeSlot]["StartTime"] + "-" + dtTableWorkingHours.Rows[timeSlot]["EndTime"];
+        //Add the row to datatable
+        dtTableFinalScheduleToDisplay.Rows.Add(drTimeSlotData);
       }
-      return availableAppointmentsForDateSelected;
     }
 
     //Create final datable to display to user
-    private void createTableSchedule(DataSet dtSetAppointmentsData)
+    private void CreateTableScheduleWhenAppointmentsBooked(DataSet dtSetAppointmentsData)
     {
-      var dtTblStylistList = dtSetAppointmentsData.Tables[0];
-      var dtTblWorkingHours = dtSetAppointmentsData.Tables[1];
-      var dtTblAppointmentsForAllStylists = dtSetAppointmentsData.Tables[2];
-
       //Create columns to display to user
-      var dtFinalScheduleToDisplay = new DataTable();
-      dtFinalScheduleToDisplay.Columns.Add("No", typeof(int));
-      dtFinalScheduleToDisplay.Columns.Add("Time", typeof(string));
-      foreach (DataRow currentStylistColumn in dtTblStylistList.Rows)
-      {
-        dtFinalScheduleToDisplay.Columns.Add(currentStylistColumn["Stylist"].ToString(), typeof(string));
-      }
-
+      var dtTableFinalScheduleToDisplay = AddColumnsToTableScheduleToDisplay(dtSetAppointmentsData);
       //Create the rows with time frames starting at 10 AM and ending at 7 PM
+      AddRowsToTableScheduleWithDataToDisplay(dtSetAppointmentsData, dtTableFinalScheduleToDisplay);
+      //Bind data loaded in table to appointments grid
+      grdViewSchedule.DataSource = dtTableFinalScheduleToDisplay;
+      grdViewSchedule.DataBind();
+
+    }
+  
+    private static void AddRowsToTableScheduleWithDataToDisplay(DataSet dtSetAppointmentsData, DataTable dtTableFinalScheduleToDisplay)
+    {
+      var dtTableStylistList = dtSetAppointmentsData.Tables[0];
+      var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
+      var dtTableAppointmentsForAllStylists = dtSetAppointmentsData.Tables[2];
       DataRow drTimeSlotData;
-      for (int timeSlot = 0; timeSlot < dtTblWorkingHours.Rows.Count; timeSlot++)
+      for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
       {
-        drTimeSlotData = dtFinalScheduleToDisplay.NewRow();
-        drTimeSlotData["No"] = dtTblWorkingHours.Rows[timeSlot]["Id"];
-        drTimeSlotData["Time"] = dtTblWorkingHours.Rows[timeSlot]["StartTime"] + " - " + dtTblWorkingHours.Rows[timeSlot]["EndTime"];
+        drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
+        drTimeSlotData["No"] = dtTableWorkingHours.Rows[timeSlot]["Id"];
+        drTimeSlotData["Time"] = dtTableWorkingHours.Rows[timeSlot]["StartTime"] + "-" + dtTableWorkingHours.Rows[timeSlot]["EndTime"];
 
         //Search for appointments for each stylist
-        foreach (DataRow currentRowStylist in dtTblStylistList.Rows)
+
+        foreach (DataRow currentRowStylist in dtTableStylistList.Rows)
         {
-          foreach (DataRow currentRowAppointments in dtTblAppointmentsForAllStylists.Rows)
+          foreach (DataRow currentRowAppointments in dtTableAppointmentsForAllStylists.Rows)
           {
-            if ((currentRowStylist["Stylist"].ToString() == currentRowAppointments["Stylist"].ToString()) && (dtTblWorkingHours.Rows[timeSlot]["StartTime"].ToString() == currentRowAppointments["StartTime"].ToString()))
+            if ((currentRowStylist["Stylist"].ToString() == currentRowAppointments["Stylist"].ToString()) && (dtTableWorkingHours.Rows[timeSlot]["StartTime"].ToString() == currentRowAppointments["StartTime"].ToString()))
             {
               //Add service and customer name to stylist column for each timeframe
               drTimeSlotData[currentRowStylist["Stylist"].ToString()] = currentRowAppointments["Service"].ToString() + " - " + currentRowAppointments["FirstName"].ToString() + " " + currentRowAppointments["LastName"].ToString().Trim();
@@ -147,12 +142,21 @@ public partial class _Default : System.Web.UI.Page
         }
 
         //Add the row to datatable
-        dtFinalScheduleToDisplay.Rows.Add(drTimeSlotData);
+        dtTableFinalScheduleToDisplay.Rows.Add(drTimeSlotData);
       }
-      //Bind data loaded in table to appointments grid
-      grdViewSchedule.DataSource = dtFinalScheduleToDisplay;
-      grdViewSchedule.DataBind();
+    }
 
+    private static DataTable AddColumnsToTableScheduleToDisplay(DataSet dtSetAppointmentsData)
+    {
+      var dtTableStylistList = dtSetAppointmentsData.Tables[0];
+      var dtTableFinalScheduleToDisplay = new DataTable();
+      dtTableFinalScheduleToDisplay.Columns.Add("No", typeof(int));
+      dtTableFinalScheduleToDisplay.Columns.Add("Time", typeof(string));
+      foreach (DataRow currentStylistColumn in dtTableStylistList.Rows)
+      {
+        dtTableFinalScheduleToDisplay.Columns.Add(currentStylistColumn["Stylist"].ToString(), typeof(string));
+      }
+      return dtTableFinalScheduleToDisplay;
     }
 
     //Load Services and Stylists from DB into group checkbox and dropdownbox
@@ -624,14 +628,15 @@ public partial class _Default : System.Web.UI.Page
           break;
       }
     }
-
-    private void AssignMessageToLabelWithResultFromDataBaseOperation(string labelForeColor, string labelBackgroundColor, string messageToUser)
+ 
+     private void AssignMessageToLabelWithResultFromDataBaseOperation(string labelForeColor, string labelBackgroundColor, string messageToUser)
     {
       LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml(labelForeColor);
       LblMessageToUser.Style["background-color"] = labelBackgroundColor;
       LblMessageToUser.Text = messageToUser;
-    }
-    
+      LblMessageToUser.Visible = true;      
+    }    
+
     private void PopulateCustomerNamesComboBox(DataTable dtTableCustomerNames)
     {
       if (dtTableCustomerNames.Rows.Count != 0)
