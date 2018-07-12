@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Data;
+using System.Linq;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -28,7 +26,9 @@ public partial class _Default : System.Web.UI.Page
       }
       else
       {
-        ClassLibrary.Popup.Message("There are no appointments for date selected");
+        LblMessageToUser.Text = "There are no appointments for date selected";
+        LblMessageToUser.Visible = true;
+        //ClassLibrary.Popup.Message("There are no appointments for date selected");
       }
     }
 
@@ -57,8 +57,9 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          Message.Text = "Error reading from Database. Please try again.";
-          Message.Visible = true;
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error reading from Database. Please try again.";
+          LblMessageToUser.Visible = true;
         }
         finally
         {
@@ -95,8 +96,9 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          Message.Text = "Error reading from Database. Please try again.";
-          Message.Visible = true;
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error reading from Database. Please try again.";
+          LblMessageToUser.Visible = true;
         }
         finally
         {
@@ -178,7 +180,9 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            ClassLibrary.Popup.Message("There are no hair lenght options in Database");
+            LblMessageToUser.Text = "There are no hair lenght options in Database";
+            LblMessageToUser.Visible = true;
+            //ClassLibrary.Popup.Message("There are no hair lenght options in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[1].Rows.Count != 0)
@@ -190,7 +194,9 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            ClassLibrary.Popup.Message("There are no services in Database");
+            LblMessageToUser.Text = "There are no services in Database";
+            LblMessageToUser.Visible = true;
+            //ClassLibrary.Popup.Message("There are no services in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[2].Rows.Count != 0)
@@ -202,7 +208,9 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            ClassLibrary.Popup.Message("There are no stylist in Database");
+            LblMessageToUser.Text = "There are no stylist in Database";
+            LblMessageToUser.Visible = true;
+            //ClassLibrary.Popup.Message("There are no stylist in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[3].Rows.Count != 0)
@@ -214,7 +222,9 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            ClassLibrary.Popup.Message("There are no service start times in Database");
+            LblMessageToUser.Text = "There are no service start times in Database";
+            LblMessageToUser.Visible = true;
+            //ClassLibrary.Popup.Message("There are no service start times in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[4].Rows.Count != 0)
@@ -228,7 +238,9 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            ClassLibrary.Popup.Message("There are no Customer names in Database");
+            LblMessageToUser.Text = "There are no Customer Names in Database";
+            LblMessageToUser.Visible = true;
+            //ClassLibrary.Popup.Message("There are no Customer names in Database");
           }
 
           command.Dispose();
@@ -238,9 +250,8 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-          LblMessageToUser.Style["background-color"] = "#FFD2D2";
-          LblMessageToUser.Text = "Error reading from the database.";
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
         finally
@@ -322,9 +333,8 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-          LblMessageToUser.Style["background-color"] = "#FFD2D2";
-          LblMessageToUser.Text = "Error reading from the database.";
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
         finally
@@ -400,9 +410,8 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-          LblMessageToUser.Style["background-color"] = "#FFD2D2";
-          LblMessageToUser.Text = "Error reading from the database.";
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
         finally
@@ -497,9 +506,8 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-          LblMessageToUser.Style["background-color"] = "#FFD2D2";
-          LblMessageToUser.Text = "Error inserting into the database.";
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);        
+          //LblMessageToUser.Text = "Error inserting into the database.";
           LblMessageToUser.Visible = true;
         }
         finally
@@ -550,65 +558,35 @@ public partial class _Default : System.Web.UI.Page
       Page.Validate("RegistrationInfoGroup");
       if (Page.IsValid == true)
       {
-        var Client = new ClientHair();
-        Client.IdCustomer = 1; //arbitrary as i do not need the id for inserting new services
-        Client.FirstNameCustomer = Client.UppercaseFirstLetter(TxtFirstName.Text.ToLower().Trim());
-        Client.LastNameCustomer = Client.UppercaseFirstLetter(TxtLastName.Text.ToLower().Trim());
-        Client.PhoneNumberCustomer = new string(TxtPhoneCell.Text.Trim().Where(char.IsDigit).ToArray()); 
-        Client.EmailCustomer = TxtEmail.Text.Trim();
-
+        NewCustomerStruct.Client customer = CreateAHashOfNewCustomerDataEntered();
+        var Client = ClientHair.CreateCustomerObjectAndAssignData(customer);
         RegisterCustomer(Client);
         PopulateCustomerNamesComboBox(LoadCustomerNamesIntoDataTable());
       }
     }
 
+    private NewCustomerStruct.Client CreateAHashOfNewCustomerDataEntered()
+    {
+      NewCustomerStruct.Client customer;
+      customer.id = 1;//arbitrary as i do not need the id for inserting new customers
+      customer.firstName = TxtFirstName.Text.ToLower().Trim();
+      customer.lastName = TxtLastName.Text.ToLower().Trim();
+      customer.phoneCell = new string(TxtPhoneCell.Text.Trim().Where(char.IsDigit).ToArray());
+      customer.email = TxtEmail.Text.Trim();
+      return customer;
+    }
+
     //Save customer data into DB
     public void RegisterCustomer(ClientHair clientToRegister)
     {
-      //Stored procedure to insert customer data
       using (SqlConnection connection = HairStylistConnectionString.Connection())
       {
         try
         {
-          //Insert services data in Database
-          var command = new SqlCommand("StoredPro_InsertCustomerData", connection);
-          command.CommandType = CommandType.StoredProcedure;
-          command.Parameters.Add("@FirstName", SqlDbType.NVarChar, 20).Value = clientToRegister.FirstNameCustomer;
-          command.Parameters.Add("@LastName", SqlDbType.NVarChar, 20).Value = clientToRegister.LastNameCustomer;
-          command.Parameters.Add("@Phone", SqlDbType.NVarChar, 15).Value = clientToRegister.PhoneNumberCustomer;
-          command.Parameters.Add("@Email", SqlDbType.NVarChar, 240).Value = clientToRegister.EmailCustomer;
-
-          command.Parameters.Add("@OperationStatus", SqlDbType.NVarChar, 23).Direction = ParameterDirection.Output;
-          command.Parameters.Add("@CustomerAlreadyExist", SqlDbType.TinyInt).Direction = ParameterDirection.Output;
-
-          connection.Open();
-          command.ExecuteNonQuery();
-
-
-          int insertResult = 0;
-          if (Int32.TryParse(command.Parameters["@CustomerAlreadyExist"].Value.ToString(), out insertResult))
-            insertResult = Int16.Parse(command.Parameters["@CustomerAlreadyExist"].Value.ToString());
-          switch (insertResult)
-          {
-            //Success Inserting
-            case 0:
-              LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#4F8A10");
-              LblMessageToUser.Style["background-color"] = "#DFF2BF";
-              LblMessageToUser.Text = command.Parameters["@OperationStatus"].Value.ToString().Trim();
-              break;
-            //Error inserting in Stored Procedure
-            case 1:
-              LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-              LblMessageToUser.Style["background-color"] = "#FFD2D2";
-              LblMessageToUser.Text = command.Parameters["@OperationStatus"].Value.ToString().Trim();
-              break;
-            //Customer already exists in Database
-            case 2:
-              LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#9F6000");
-              LblMessageToUser.Style["background-color"] = "#FEEFB3";
-              LblMessageToUser.Text = command.Parameters["@OperationStatus"].Value.ToString().Trim();
-              break;
-          }
+          var command = ClientHair.InsertNewCustomerDataIntoDB(clientToRegister, connection);
+          int insertResult = ClientHair.DetermineWhetherCustomerAlreadyExistInDB(command);
+          string message = ClientHair.GetMessageResultFromInsertingCustomer(command);
+          DisplayInsertResultToUser(message, insertResult);
           LblMessageToUser.Visible = true;
           command.Dispose();
         }
@@ -617,9 +595,8 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-          LblMessageToUser.Style["background-color"] = "#FFD2D2";
-          LblMessageToUser.Text = "Error inserting into the database.";
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error inserting into the database.";
           LblMessageToUser.Visible = true;
         }
         finally
@@ -629,6 +606,31 @@ public partial class _Default : System.Web.UI.Page
       }
     }
 
+    public void DisplayInsertResultToUser(string messageFromInserting, int insertResult)
+    {
+      switch (insertResult)
+      {
+        //Success Inserting
+        case 0:
+          AssignMessageToLabelWithResultFromDataBaseOperation("#4F8A10", "#DFF2BF", messageFromInserting);
+          break;
+        //Error inserting in Stored Procedure
+        case 1:
+          AssignMessageToLabelWithResultFromDataBaseOperation("#D8000C", "#FFD2D2", messageFromInserting);
+          break;
+        //Customer already exists in Database
+        case 2:
+          AssignMessageToLabelWithResultFromDataBaseOperation("#9F6000", "#FEEFB3", messageFromInserting);
+          break;
+      }
+    }
+
+    private void AssignMessageToLabelWithResultFromDataBaseOperation(string labelForeColor, string labelBackgroundColor, string messageToUser)
+    {
+      LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml(labelForeColor);
+      LblMessageToUser.Style["background-color"] = labelBackgroundColor;
+      LblMessageToUser.Text = messageToUser;
+    }
     
     private void PopulateCustomerNamesComboBox(DataTable dtTableCustomerNames)
     {
@@ -638,7 +640,9 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            ClassLibrary.Popup.Message("There are no Customer names in Database");
+            LblMessageToUser.Text = "There are no Customer names in Database";
+            LblMessageToUser.Visible = true;
+            //ClassLibrary.Popup.Message("There are no Customer names in Database");
           }
     }
     
@@ -673,9 +677,8 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml("#D8000C");
-          LblMessageToUser.Style["background-color"] = "#FFD2D2";
-          LblMessageToUser.Text = "Error reading from the database.";
+          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
         finally

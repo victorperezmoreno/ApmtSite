@@ -180,7 +180,7 @@
               <Content>
                 <div class="divNewApmtTable" id="AppointmentTable">
                   <div class="divNewApmtTableCell">
-                    <asp:Label ID="Label1" runat="server" CssClass="Attention" Text="Appointment Confirmed" Visible="False"></asp:Label>
+                   <%-- <asp:Label ID="Label1" runat="server" CssClass="Attention" Text="Appointment Confirmed" Visible="False"></asp:Label>--%>
                   </div>
                   <div class="divNewApmtTableCell">
                     <asp:Label ID="LblName" runat="server" Text="Name: "></asp:Label>
@@ -224,7 +224,7 @@
               <Content>
                 <div class="divNewCustomerTable" id="NewCustomerTable">
                   <div class="divNewCustomerTableCell">
-                    <asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="" Visible="False"></asp:Label>
+                    <%--<asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="" Visible="False"></asp:Label>--%>
                   </div>
                   <div class="divNewCustomerTableCell">
                     <asp:Label ID="LblFirstName" runat="server" Text="First Name"></asp:Label>
@@ -273,7 +273,7 @@
         </ajaxToolkit:Accordion>
       </div>
        <div id="content">
-        <asp:Label ID="Message" runat="server" CssClass="Attention" Text="Message to User" Visible="False"></asp:Label>
+        <asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="Message to User" Visible="False"></asp:Label>
         <asp:TextBox ID="TxtAppointmentSummary"  CssClass="mainCalendar" runat="server" MaxLength="10" onblur="return validateAppointmentSummaryDate(this);" AutoPostBack="True" OnTextChanged="TxtSummaryDateChange"/>
         <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ControlToValidate="TxtAppointmentSummary" CssClass="ErrorMessage" Display="Dynamic" validationgroup="ScheduledAppointmentsGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
         <asp:GridView ID="grdViewSchedule" runat="server" CssClass="ScheduleGridview" RowStyle-CssClass="ColumnAuto">
