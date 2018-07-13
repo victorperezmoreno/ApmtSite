@@ -350,7 +350,7 @@ br {clear:left;  }
 {
   text-align: center;
   vertical-align: middle;
-  border: 2px solid #c33803;
+  border: 2px solid #808080;
   border-radius: 5px;
   background: #FFFFFF;
   font-family: Verdana, Arial;
@@ -373,8 +373,9 @@ br {clear:left;  }
 .Attention
 {
   border: 2px solid #e2e2e2;
+  font-size: 1.3em;
   padding: 5px 0;
-  width: 200px;
+  width: 100%; 
   margin: auto;
   display: block;
   text-align: center;
@@ -504,8 +505,8 @@ br {clear:left;  }
   /*Here starts the div table for new appointment*/
 .divNewApmtTable /*New appointment Table Formatting*/
 {
-   width: 98%;
-   border: solid 2px #A9A9A9;
+   width: 99%;
+   border: solid 1px #A9A9A9;
 }
 
 .divNewApmtTableCell
@@ -569,8 +570,8 @@ br {clear:left;  }
 
 .divNewCustomerTable /*New Customer Div Formatting*/
 {
-   width: 98%; /*25%*/
-   border: solid 2px #A9A9A9;
+   width: 99%; /*25%*/
+   border: solid 1px #A9A9A9;
    margin: 0 auto;
 }
 
@@ -644,7 +645,7 @@ br {clear:left;  }
 
 .ScheduleGridview tr:nth-child(odd)
 {
-    background-color: #cccccc;
+    background-color: #c3d7f7;
 }
 
 .ColumnAuto td
@@ -746,12 +747,15 @@ br {clear:left;  }
 
 .accordionHeaderCssClass 
 {
-  background-color: #c33803;
-  color: white;
+  background-color: #c3d7f7; 
+  color: #606060;
   font-family:Verdana, Arial;
   font-size: 1.3em;
   border: 1px solid black;
   padding: 4px;
+  background-image: url(http://localhost:54531/App_Themes/Darkbrown/Images/ArrowDown.png);  
+  background-repeat: no-repeat;
+	background-position: right center;
 }
 
 /*.accordionContentCssClass 
@@ -764,11 +768,14 @@ br {clear:left;  }
 .accordionHeaderSelectedCss 
 {
   background-color: #808080;
-  color: white;
+  color: #edeeef;
   font-family:Verdana, Arial;
   font-size: 1.3em;
   border: 1px solid black;
   padding: 4px;
+  background-image: url(http://localhost:54531/App_Themes/Darkbrown/Images/ArrowUp.png);
+  background-repeat: no-repeat;
+	background-position: right center;
 }  
 
 
