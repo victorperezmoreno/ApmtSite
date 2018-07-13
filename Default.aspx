@@ -8,7 +8,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Appointment Booking</title>
-  <link href="Scripts/jquery-ui.min.css" rel="stylesheet" /> 
+  <link href="Scripts/jquery-ui.theme.min.css" rel="stylesheet" />
   <script src="Scripts/jquery-3.2.1.min.js"></script>
   <script src="Scripts/jquery-ui-1.12.1.js"></script>
   <script src="Scripts/jquery.inputmask.bundle.min.js"></script>
@@ -19,20 +19,18 @@
   <script>
     //calendar for summary of appointments on a given date
     $(function () {
-      $("#TxtAppointmentSummary").datepicker({ minDate: -2, maxDate: "+1M +10D" });
+      $("#TxtAppointmentSummary").datepicker({
+        minDate: -2, maxDate: "+1M +10D", beforeShowDay: function (date) {
+          var day = date.getDay();
+          return [(day != 0), ''];
+        }
+      });
     });
 
     //Hide customer registration success/failure message
     $(document).ready(function () {
-      $('.Attention').delay(3000).fadeOut('slow');
+      $('.Attention').delay(5000).fadeOut('slow');
     });
-
-    //Hide Validation Summary
-    //$(document).ready(function () {
-    //  $("input[type=text]").change(function () {
-    //    Page_ClientValidate();
-    //  });
-    //});
 
     //Validate Services Checkbox
     function verifyCheckboxList(source, arguments) {
@@ -56,7 +54,7 @@
       if (txtbox.value == "") {
         txtbox.style.borderColor = "Red";
         ValidatorEnable(document.getElementById("RequiredFieldValidator7"), true);
-        txtbox.focus();
+        //txtbox.focus();
         return false;
       }
       else {
@@ -67,7 +65,12 @@
 
     //calendar for booking accordion
     $(function () {
-      $("#TxtAppointmentDate").datepicker({ minDate: 0, maxDate: "+1M +10D" });
+      $("#TxtAppointmentDate").datepicker({
+        minDate: 0, maxDate: "+1M +10D", beforeShowDay: function (date) {
+          var day = date.getDay();
+          return [(day != 0), ''];
+        }
+      });
     });
 
     //Mask for telephone number
@@ -133,7 +136,7 @@
       if (txtbox.value == "") {
         txtbox.style.borderColor = "Red";
         ValidatorEnable(document.getElementById("RequiredFieldValidator8"), true);
-        txtbox.focus();
+        //txtbox.focus();
         return false;
       }
       else {
@@ -159,13 +162,11 @@
           <div id="social-media">
             <p>Connect with us </p>
             <ul>
-              <li><a href="www.facebook.com">
+              <li><a href="https://www.facebook.com/hairbyyeonfamilyhairsalon">
                 <img src="../App_Themes/Darkbrown/Social icons/Facebook.png" /></a> </li>
-              <li><a href="www.tweeter.com">
-                <img src="../App_Themes/Darkbrown/Social icons/Tweeter.png" />
+              <li><a href="https://www.instagram.com/hairbyyeon/">
+                <img src="../App_Themes/Darkbrown/Social icons/Instagram.png" />
               </a></li>
-              <li><a href="www.youtube.com">
-                <img src="../App_Themes/Darkbrown/Social icons/Youtube.png" /></a> </li>
             </ul>
             <p>Contact us today for more info 703 968 6750</p>
           </div>
@@ -179,9 +180,6 @@
               <Header>Booking</Header>
               <Content>
                 <div class="divNewApmtTable" id="AppointmentTable">
-                  <div class="divNewApmtTableCell">
-                   <%-- <asp:Label ID="Label1" runat="server" CssClass="Attention" Text="Appointment Confirmed" Visible="False"></asp:Label>--%>
-                  </div>
                   <div class="divNewApmtTableCell">
                     <asp:Label ID="LblName" runat="server" Text="Name: "></asp:Label>
                     <ajaxToolkit:ComboBox ID="CmbBxName" runat="server" CssClass="WindowsStyle" AutoCompleteMode="Append"
@@ -223,9 +221,6 @@
               <Header>New User</Header>
               <Content>
                 <div class="divNewCustomerTable" id="NewCustomerTable">
-                  <div class="divNewCustomerTableCell">
-                    <%--<asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="" Visible="False"></asp:Label>--%>
-                  </div>
                   <div class="divNewCustomerTableCell">
                     <asp:Label ID="LblFirstName" runat="server" Text="First Name"></asp:Label>
                   </div>
