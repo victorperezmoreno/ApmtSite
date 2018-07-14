@@ -204,12 +204,18 @@
                     <asp:DropDownList ID="DDLStylist" runat="server"></asp:DropDownList>
                   </div>
                   <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label>
-                    <asp:TextBox ID="TxtAppointmentDate" runat="server" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>
+                    <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label><asp:TextBox ID="TxtAppointmentDate" runat="server" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>    
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="TxtAppointmentDate" CssClass="ErrorMessage" Display="Dynamic" validationgroup="BookingInfoGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
                   </div>
                   <div class="divNewApmtTableCell">
-                    <asp:Label ID="Label2" runat="server" Text="Start Time: "></asp:Label><asp:DropDownList ID="DDLBeginTime" runat="server"></asp:DropDownList>
+                    <asp:UpdatePanel ID="UpdtPanelStartTime" UpdateMode="Conditional" runat="server">
+                      <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="TxtAppointmentDate" EventName="TextChanged" />
+                      </Triggers>
+                      <ContentTemplate>
+                        <asp:Label ID="Label2" runat="server" Text="Start Time: "></asp:Label><asp:DropDownList ID="DDLBeginTime" runat="server"></asp:DropDownList>
+                      </ContentTemplate>
+                    </asp:UpdatePanel>     
                   </div>
                   <div class="divNewApmtTableCell">
                     <asp:Button ID="ApmtButton" runat="server" OnClick="ApmtButton_Click" Text="Book Now!" CssClass="submitButton" validationgroup="BookingInfoGroup"/>
@@ -271,8 +277,15 @@
         <asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="Message to User" Visible="False"></asp:Label>
         <asp:TextBox ID="TxtAppointmentSummary"  CssClass="mainCalendar" runat="server" MaxLength="10" onblur="return validateAppointmentSummaryDate(this);" AutoPostBack="True" OnTextChanged="TxtSummaryDateChange"/>
         <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ControlToValidate="TxtAppointmentSummary" CssClass="ErrorMessage" Display="Dynamic" validationgroup="ScheduledAppointmentsGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
-        <asp:GridView ID="grdViewSchedule" runat="server" CssClass="ScheduleGridview" RowStyle-CssClass="ColumnAuto">
-        </asp:GridView>
+         <asp:UpdatePanel ID="UpdtPanelScheduleGridView" UpdateMode="Conditional" runat="server">
+           <Triggers>
+             <asp:AsyncPostBackTrigger ControlID="TxtAppointmentSummary" EventName="TextChanged"/>
+           </Triggers>
+           <ContentTemplate>
+             <asp:GridView ID="grdViewSchedule" runat="server" CssClass="ScheduleGridview" RowStyle-CssClass="ColumnAuto">
+             </asp:GridView>
+           </ContentTemplate>
+         </asp:UpdatePanel>
       </div>
       </div>
       <div id="footer">
