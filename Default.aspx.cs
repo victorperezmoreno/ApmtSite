@@ -10,11 +10,13 @@ public partial class _Default : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
       if (!IsPostBack)
-      {
+      {  
         TxtAppointmentSummary.Text = DateTime.Today.ToShortDateString();
         PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());
         /*Filling up the checkboxlist, services, names and times dropdownlist*/
         LoadServicesAndStylistForAppointmentBooking();
+        TxtAppointmentDate.Text = DateTime.Today.ToShortDateString();
+        DetermineWhetherDateForBookingAppointmentSelectedIsToday();
       }
     }
 
@@ -524,31 +526,44 @@ public partial class _Default : System.Web.UI.Page
 
     protected void TxtAppointmentDateChange(object sender, EventArgs e)
     {
+      DetermineWhetherDateForBookingAppointmentSelectedIsToday();
+
+    }
+
+    private void DetermineWhetherDateForBookingAppointmentSelectedIsToday()
+    {
       if (TxtAppointmentDate.Text.Trim() != "")
       {
         DateTime dateSelected = Convert.ToDateTime(TxtAppointmentDate.Text.ToString().Trim());
         if (dateSelected.Date == DateTime.Now.Date)
         {
-          int index = 0;
-          //bool noNeedToContinue = false;
-          TimeSpan time = DateTime.Now.TimeOfDay;
-          foreach (ListItem timeSlot in DDLBeginTime.Items)
-          {
-            TimeSpan serviceStartTime = TimeSpan.Parse(timeSlot.Text.ToString().Trim());
-            if (serviceStartTime < time)
-            {
-              timeSlot.Attributes.Add("disabled", "disabled");
-            }
-            else
-            {
-              DDLBeginTime.SelectedIndex = index;
-              break; 
-            }
-            index++;
-          }
+          DisableStartTimesBeforeTimeOfTheDayIfTodaysDateIsSelected();
+        }
+        else
+        {
+          DDLBeginTime.SelectedIndex = 0;
         }
       }
+    }
 
+    private void DisableStartTimesBeforeTimeOfTheDayIfTodaysDateIsSelected()
+    {
+      int index = 0;
+      TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
+      foreach (ListItem timeSlot in DDLBeginTime.Items)
+      {
+        TimeSpan serviceStartTime = TimeSpan.Parse(timeSlot.Text.ToString().Trim());
+        if (serviceStartTime < timeOfDay)
+        {
+          timeSlot.Attributes.Add("disabled", "disabled");
+        }
+        else
+        {
+          DDLBeginTime.SelectedIndex = index;
+          break;
+        }
+        index++;
+      }
     }
 
     protected void ServicesList_ServerValidation(object source, ServerValidateEventArgs args)
