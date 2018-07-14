@@ -204,7 +204,7 @@
                     <asp:DropDownList ID="DDLStylist" runat="server"></asp:DropDownList>
                   </div>
                   <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label><asp:TextBox ID="TxtAppointmentDate" runat="server" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>    
+                    <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label><asp:TextBox ID="TxtAppointmentDate" runat="server" TextMode="Date" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>    
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="TxtAppointmentDate" CssClass="ErrorMessage" Display="Dynamic" validationgroup="BookingInfoGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
                   </div>
                   <div class="divNewApmtTableCell">
@@ -248,7 +248,7 @@
                     <asp:Label ID="LblPhonePlaceholder" runat="server" Text="(Only numbers)" CssClass="LabelPlaceHolder"></asp:Label>
                   </div>
                   <div class="divNewCustomerTableCell">
-                    <asp:TextBox ID="TxtPhoneCell" runat="server" PlaceHolder="(XXX) XXX-XXXX" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 9) || (event.keyCode >= 45 && event.keyCode <= 57));" MaxLength="14" onblur="return validatePhone(this);"></asp:TextBox><br />
+                    <asp:TextBox ID="TxtPhoneCell" runat="server" TextMode="Phone" PlaceHolder="(XXX) XXX-XXXX" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 9) || (event.keyCode >= 45 && event.keyCode <= 57));" MaxLength="14" onblur="return validatePhone(this);"></asp:TextBox><br />
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ControlToValidate="TxtPhoneCell" CssClass="ErrorMessage" Display="Dynamic" validationgroup="RegistrationInfoGroup" ErrorMessage="Enter a phone number">Please enter phone number</asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="TxtPhoneCell" CssClass="ErrorMessage" Display="Dynamic" ErrorMessage="Enter a valid phone number"
                       ValidationExpression="(?:(?:(\s*\(?([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\)?\s*(?:[.-]\s*)?)([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})">Enter valid phone number</asp:RegularExpressionValidator>
@@ -257,12 +257,12 @@
                     <asp:Label ID="LblEmail" runat="server" Text="Email"></asp:Label>
                   </div>
                   <div class="divNewCustomerTableCell">
-                    <asp:TextBox ID="TxtEmail" runat="server" MaxLength="20" onblur="return validateEmail(this);"></asp:TextBox>
+                    <asp:TextBox ID="TxtEmail" runat="server" TextMode="Email" MaxLength="20" onblur="return validateEmail(this);"></asp:TextBox>
                     <br />
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ControlToValidate="TxtEmail" CssClass="ErrorMessage" Display="Dynamic" validationgroup="RegistrationInfoGroup" ErrorMessage="Enter customer email">Please enter email</asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server"
                       ControlToValidate="TxtEmail" ErrorMessage="Enter correct email" CssClass="ErrorMessage"
-                      ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
+                      ValidationExpression="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"></asp:RegularExpressionValidator>
                   </div>
                   <div class="divNewCustomerTableCell">
                     <asp:Button ID="NewCustomerButton" runat="server" Text="Register!" OnClick="BtnNewCustomer_Click" CssClass="submitButton" validationgroup="RegistrationInfoGroup" />
