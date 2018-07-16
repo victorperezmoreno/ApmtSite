@@ -8,10 +8,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Appointment Booking</title>
-  <link href="Scripts/jquery-ui.theme.min.css" rel="stylesheet" />
-  <script src="Scripts/jquery-3.2.1.min.js"></script>
-  <script src="Scripts/jquery-ui-1.12.1.js"></script>
-  <script src="Scripts/jquery.inputmask.bundle.min.js"></script>
+  <link href="App_Themes/Darkbrown/jquery-ui.theme.min.css" rel="stylesheet" />
+  <script src="Scripts/jquery/jquery-3.2.1.min.js"></script>
+  <script src="Scripts/jqueryui/jquery-ui-1.12.1.min.js"></script>
+  <script src="Scripts/inputmask/jquery.inputmask.bundle.min.js"></script>
   <script src="Scripts/inputmask/phone-codes/phone.min.js"></script>
   <script src="Scripts/inputmask/phone-codes/phone-ru.min.js"></script>
   <script src="Scripts/inputmask/phone-codes/phone-be.min.js"></script>
@@ -145,7 +145,14 @@
       }
     }
   </script>
-     
+    
+  <webopt:bundlereference runat="server" Path="~/StyleSheets" /> 
+  <webopt:bundlereference runat="server" Path="~/jquery" />
+  <webopt:bundlereference runat="server" Path="~/jqueryui" />
+  <webopt:bundlereference runat="server" Path="~/jqueryinputmask" /> 
+  <webopt:bundlereference runat="server" Path="~/jqueryinputmaskphonemin" />
+  <webopt:bundlereference runat="server" Path="~/jqueryinputmaskphoneru" />
+  <webopt:bundlereference runat="server" Path="~/jqueryinputmaskphonebe" />
 </head>
 <body>
   <form id="form1" runat="server">
