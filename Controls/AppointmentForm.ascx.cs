@@ -78,7 +78,7 @@ public partial class Controls_AppointmentForm : System.Web.UI.UserControl
         finally
         {
           adapterServicesAndStylist.Dispose();
-          conn.Close();
+          //conn.Close();
         }
       }
     }
@@ -136,7 +136,7 @@ public partial class Controls_AppointmentForm : System.Web.UI.UserControl
         }
         finally
         {
-          conn.Close();
+          //conn.Close();
         }
       }
     }
@@ -259,7 +259,7 @@ public partial class Controls_AppointmentForm : System.Web.UI.UserControl
         }
         finally
         {
-          connection.Close();
+          //connection.Close();
         }
       }
 

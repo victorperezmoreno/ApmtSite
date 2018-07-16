@@ -6,61 +6,8 @@
     <edmx:StorageModels>
     <Schema Namespace="HairAppointmentModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="HairAppointmentModelStoreContainer">
-          <EntitySet Name="Appointment" EntityType="HairAppointmentModel.Store.Appointment" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Customer" EntityType="HairAppointmentModel.Store.Customer" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Service" EntityType="HairAppointmentModel.Store.Service" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Stylist" EntityType="HairAppointmentModel.Store.Stylist" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="sysdiagrams" EntityType="HairAppointmentModel.Store.sysdiagrams" store:Type="Tables" Schema="dbo" />
-          <AssociationSet Name="FK_Appointment_Customer" Association="HairAppointmentModel.Store.FK_Appointment_Customer">
-            <End Role="Customer" EntitySet="Customer" />
-            <End Role="Appointment" EntitySet="Appointment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Appointment_Service" Association="HairAppointmentModel.Store.FK_Appointment_Service">
-            <End Role="Service" EntitySet="Service" />
-            <End Role="Appointment" EntitySet="Appointment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Appointment_Stylist" Association="HairAppointmentModel.Store.FK_Appointment_Stylist">
-            <End Role="Stylist" EntitySet="Stylist" />
-            <End Role="Appointment" EntitySet="Appointment" />
-          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Appointment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="AppointmentDate" Type="date" Nullable="false" />
-          <Property Name="BeginTime" Type="time" Nullable="false" />
-          <Property Name="EndTime" Type="time" Nullable="false" />
-          <Property Name="IdService" Type="int" Nullable="false" />
-          <Property Name="IdStylist" Type="int" Nullable="false" />
-          <Property Name="IdCustomer" Type="int" Nullable="false" />
-          <Property Name="RegistratrionDate" Type="datetime" Nullable="false" />
-          <Property Name="RegisteredBy" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Customer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="LastName" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="Phone" Type="nvarchar" Nullable="false" MaxLength="15" />
-        </EntityType>
-        <EntityType Name="Service">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Service" Type="nvarchar" Nullable="false" MaxLength="100" />
-        </EntityType>
-        <EntityType Name="Stylist">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Stylist" Type="nvarchar" Nullable="false" MaxLength="100" />
-        </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -71,42 +18,6 @@
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
-        <Association Name="FK_Appointment_Customer">
-          <End Role="Customer" Type="HairAppointmentModel.Store.Customer" Multiplicity="1" />
-          <End Role="Appointment" Type="HairAppointmentModel.Store.Appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Customer">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Appointment">
-              <PropertyRef Name="IdCustomer" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Appointment_Service">
-          <End Role="Service" Type="HairAppointmentModel.Store.Service" Multiplicity="1" />
-          <End Role="Appointment" Type="HairAppointmentModel.Store.Appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Appointment">
-              <PropertyRef Name="IdService" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Appointment_Stylist">
-          <End Role="Stylist" Type="HairAppointmentModel.Store.Stylist" Multiplicity="1" />
-          <End Role="Appointment" Type="HairAppointmentModel.Store.Appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stylist">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Appointment">
-              <PropertyRef Name="IdStylist" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Function Name="fn_diagramobjects" ReturnType="int" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
@@ -143,22 +54,6 @@
     <edmx:ConceptualModels>
       <Schema Namespace="HairAppointmentModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="HairAppointmentEntities" p1:LazyLoadingEnabled="true">
-          <EntitySet Name="Appointments" EntityType="HairAppointmentModel.Appointment" />
-          <EntitySet Name="Customers" EntityType="HairAppointmentModel.Customer" />
-          <EntitySet Name="Services" EntityType="HairAppointmentModel.Service" />
-          <EntitySet Name="Stylists" EntityType="HairAppointmentModel.Stylist" />
-          <AssociationSet Name="FK_Appointment_Customer" Association="HairAppointmentModel.FK_Appointment_Customer">
-            <End Role="Customer" EntitySet="Customers" />
-            <End Role="Appointment" EntitySet="Appointments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Appointment_Service" Association="HairAppointmentModel.FK_Appointment_Service">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="Appointment" EntitySet="Appointments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Appointment_Stylist" Association="HairAppointmentModel.FK_Appointment_Stylist">
-            <End Role="Stylist" EntitySet="Stylists" />
-            <End Role="Appointment" EntitySet="Appointments" />
-          </AssociationSet>
           <EntitySet Name="sysdiagrams" EntityType="HairAppointmentModel.sysdiagram" />
           <FunctionImport Name="sp_alterdiagram">
             <Parameter Name="diagramname" Mode="In" Type="String" />
@@ -191,85 +86,6 @@
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
         </EntityContainer>
-        <EntityType Name="Appointment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="AppointmentDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="BeginTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="EndTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="IdService" Type="Int32" Nullable="false" />
-          <Property Name="IdStylist" Type="Int32" Nullable="false" />
-          <Property Name="IdCustomer" Type="Int32" Nullable="false" />
-          <Property Name="RegistratrionDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="RegisteredBy" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Customer" Relationship="HairAppointmentModel.FK_Appointment_Customer" FromRole="Appointment" ToRole="Customer" />
-          <NavigationProperty Name="Service" Relationship="HairAppointmentModel.FK_Appointment_Service" FromRole="Appointment" ToRole="Service" />
-          <NavigationProperty Name="Stylist" Relationship="HairAppointmentModel.FK_Appointment_Stylist" FromRole="Appointment" ToRole="Stylist" />
-        </EntityType>
-        <EntityType Name="Customer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="Phone" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Appointments" Relationship="HairAppointmentModel.FK_Appointment_Customer" FromRole="Customer" ToRole="Appointment" />
-        </EntityType>
-        <EntityType Name="Service">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="Service1" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Appointments" Relationship="HairAppointmentModel.FK_Appointment_Service" FromRole="Service" ToRole="Appointment" />
-        </EntityType>
-        <EntityType Name="Stylist">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="Stylist1" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Appointments" Relationship="HairAppointmentModel.FK_Appointment_Stylist" FromRole="Stylist" ToRole="Appointment" />
-        </EntityType>
-        <Association Name="FK_Appointment_Customer">
-          <End Role="Customer" Type="HairAppointmentModel.Customer" Multiplicity="1" />
-          <End Role="Appointment" Type="HairAppointmentModel.Appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Customer">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Appointment">
-              <PropertyRef Name="IdCustomer" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Appointment_Service">
-          <End Role="Service" Type="HairAppointmentModel.Service" Multiplicity="1" />
-          <End Role="Appointment" Type="HairAppointmentModel.Appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Appointment">
-              <PropertyRef Name="IdService" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Appointment_Stylist">
-          <End Role="Stylist" Type="HairAppointmentModel.Stylist" Multiplicity="1" />
-          <End Role="Appointment" Type="HairAppointmentModel.Appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stylist">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Appointment">
-              <PropertyRef Name="IdStylist" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="sysdiagram">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -297,47 +113,6 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="HairAppointmentModelStoreContainer" CdmEntityContainer="HairAppointmentEntities">
-          <EntitySetMapping Name="Appointments">
-            <EntityTypeMapping TypeName="HairAppointmentModel.Appointment">
-              <MappingFragment StoreEntitySet="Appointment">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="AppointmentDate" ColumnName="AppointmentDate" />
-                <ScalarProperty Name="BeginTime" ColumnName="BeginTime" />
-                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
-                <ScalarProperty Name="IdService" ColumnName="IdService" />
-                <ScalarProperty Name="IdStylist" ColumnName="IdStylist" />
-                <ScalarProperty Name="IdCustomer" ColumnName="IdCustomer" />
-                <ScalarProperty Name="RegistratrionDate" ColumnName="RegistratrionDate" />
-                <ScalarProperty Name="RegisteredBy" ColumnName="RegisteredBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Customers">
-            <EntityTypeMapping TypeName="HairAppointmentModel.Customer">
-              <MappingFragment StoreEntitySet="Customer">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Services">
-            <EntityTypeMapping TypeName="HairAppointmentModel.Service">
-              <MappingFragment StoreEntitySet="Service">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Service1" ColumnName="Service" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Stylists">
-            <EntityTypeMapping TypeName="HairAppointmentModel.Stylist">
-              <MappingFragment StoreEntitySet="Stylist">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Stylist1" ColumnName="Stylist" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
             <EntityTypeMapping TypeName="HairAppointmentModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
