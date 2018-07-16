@@ -281,7 +281,7 @@
            <Triggers>
              <asp:AsyncPostBackTrigger ControlID="TxtAppointmentSummary" EventName="TextChanged"/>
            </Triggers>
-           <ContentTemplate>
+           <ContentTemplate>       
              <asp:GridView ID="grdViewSchedule" runat="server" CssClass="ScheduleGridview" RowStyle-CssClass="ColumnAuto">
              </asp:GridView>
            </ContentTemplate>

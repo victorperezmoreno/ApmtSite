@@ -71,7 +71,7 @@ public partial class _Default : System.Web.UI.Page
         }
         finally
         {
-          connection.Close();
+          //connection.Close();
         }
       }
       return dtSetAppointmentsPerSpecificDate;
@@ -263,7 +263,7 @@ public partial class _Default : System.Web.UI.Page
         finally
         {
           adapterDropDownListForBookingAppointments.Dispose();
-          connection.Close();
+          //connection.Close();
         }
       }
     }
@@ -345,7 +345,7 @@ public partial class _Default : System.Web.UI.Page
         }
         finally
         {
-          connection.Close();
+          //connection.Close();
         }
       }
       return dtTableServicesDetails;
@@ -422,7 +422,7 @@ public partial class _Default : System.Web.UI.Page
         }
         finally
         {
-          connection.Close();
+          //connection.Close();
         }
       }
       return dtTableStylistAppointments;
@@ -518,7 +518,7 @@ public partial class _Default : System.Web.UI.Page
         }
         finally
         {
-          connection.Close();
+          //connection.Close();
         }
       }
       return appointmentDateSelected;
@@ -620,7 +620,7 @@ public partial class _Default : System.Web.UI.Page
         }
         finally
         {
-          connection.Close();
+          //connection.Close();
         }
       }
     }
@@ -703,7 +703,7 @@ public partial class _Default : System.Web.UI.Page
         }
         finally
         { 
-          connection.Close();
+          //connection.Close();
         }
       }
       return dtTableComboBoxCustomerNames;
