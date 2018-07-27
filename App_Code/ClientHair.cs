@@ -23,7 +23,7 @@ using System.Data;
     {
     }
 
-    public static ClientHair CreateCustomerObjectAndAssignData(NewCustomerStruct.Client customer)
+    public static ClientHair CreateCustomerObjectAndAssignData(ProjectStructs.Client customer)
     {
       var Client = new ClientHair();
       Client.IdCustomer = customer.id; //arbitrary as i do not need the id for inserting new customers

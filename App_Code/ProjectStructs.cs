@@ -4,9 +4,9 @@ using System.Linq;
 using System.Web;
 
 /// <summary>
-/// Summary description for NewCustomerStruct
+/// Summary description for ProjectStructs
 /// </summary>
-public class NewCustomerStruct
+public class ProjectStructs
 {
   public struct Client
   {
@@ -16,4 +16,17 @@ public class NewCustomerStruct
     public string phoneCell;
     public string email;
   }
+
+  public struct TimeSlotsStartingAndEndingTimes
+  {
+    public TimeSpan serviceStartTime;
+    public TimeSpan serviceEndTime;
+  }
+
+	public ProjectStructs()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
 }
