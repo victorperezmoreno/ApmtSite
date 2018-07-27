@@ -122,14 +122,13 @@ public partial class _Default : System.Web.UI.Page
       var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
       var dtTableAppointmentsForAllStylists = dtSetAppointmentsData.Tables[2];
       DataRow drTimeSlotData;
+      int totalSlotsToCreateForSameCustomer = 0;
       for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
       {
         drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
         drTimeSlotData["No"] = dtTableWorkingHours.Rows[timeSlot]["Id"];
         drTimeSlotData["Time"] = dtTableWorkingHours.Rows[timeSlot]["StartTime"] + "-" + dtTableWorkingHours.Rows[timeSlot]["EndTime"];
-
-        //Search for appointments for each stylist
-
+        //Search appointments for each stylist
         foreach (DataRow currentRowStylist in dtTableStylistList.Rows)
         {
           foreach (DataRow currentRowAppointments in dtTableAppointmentsForAllStylists.Rows)
@@ -142,7 +141,6 @@ public partial class _Default : System.Web.UI.Page
             }
           }
         }
-
         //Add the row to datatable
         dtTableFinalScheduleToDisplay.Rows.Add(drTimeSlotData);
       }
@@ -355,40 +353,57 @@ public partial class _Default : System.Web.UI.Page
     {
       //Datable with services to be performed and proposed schedule
       var dtTblServicesToBeBooked = CreateDataTableForServicesToBeBooked();
-
-      TimeSpan serviceStartTime = TimeSpan.ParseExact(appointmentData.StartingTime, "g", null);
+      ProjectStructs.TimeSlotsStartingAndEndingTimes currentTimeSlotService;
+      currentTimeSlotService.serviceStartTime = TimeSpan.ParseExact(appointmentData.StartingTime, "g", null);
+      currentTimeSlotService.serviceEndTime = TimeSpan.Zero;
 
       foreach (char c in appointmentData.Services)
       {
         byte serviceNumber = (byte)Char.GetNumericValue(c);
         DataRow drService = dtTblServicesDuration.Rows.Find(serviceNumber);
-
-        int processingTime = 0;
-        if (Int32.TryParse(drService["ProcessingTime"].ToString(), out processingTime))
-          processingTime = Int32.Parse(drService["ProcessingTime"].ToString());
-
-        int serviceDuration;
-        if ((int)appointmentData.CustomerHairLength == 1)
-          serviceDuration = Int32.Parse(drService["DurationAboveShoulder"].ToString());
-        else
-          serviceDuration = Int32.Parse(drService["DurationBelowShoulder"].ToString());
-        //Calculate end time based on services duration time
+        int serviceDuration = ReturnServiceDurationAccordingToHairLenght(appointmentData, drService);
+        
         TimeSpan minutesServiceDuration = new TimeSpan(0, serviceDuration, 0);
-        TimeSpan serviceEndTime = serviceStartTime + minutesServiceDuration;
-
-        string startingTime = string.Format("{0:D2}:{1:D2}", serviceStartTime.Hours, serviceStartTime.Minutes);
-        string endingTime = string.Format("{0:D2}:{1:D2}", serviceEndTime.Hours, serviceEndTime.Minutes);
-        //Add services details row to datable
-        dtTblServicesToBeBooked.Rows.Add(appointmentData.DesiredDate, startingTime,
-          endingTime, serviceNumber, appointmentData.HairStylist,
-          (int)appointmentData.CustomerHairLength, appointmentData.IdCustomer,
-          DateTime.Now, appointmentData.RegisteredBy, appointmentData.Cancelled,
-          appointmentData.CancellationReason);
-        //Setting up starting time for next service\
-        TimeSpan minutesProcessingInterval = new TimeSpan(0, processingTime, 0);
-        serviceStartTime = serviceEndTime + minutesProcessingInterval;
+        int totalSlotsToCreateForSameCustomer =  (int)minutesServiceDuration.TotalMinutes / AppConstants.ScheduleTimeSlot.TimeSlotToDisplayInScheduleInMinutes;
+        for (int timeSlotCounter = 1; timeSlotCounter <= totalSlotsToCreateForSameCustomer; timeSlotCounter++)
+        {
+          //Calculate end time based on services duration time
+          currentTimeSlotService.serviceEndTime = currentTimeSlotService.serviceStartTime + new TimeSpan(0, AppConstants.ScheduleTimeSlot.TimeSlotToDisplayInScheduleInMinutes, 0);
+          appointmentData.StartingTime = string.Format("{0:D2}:{1:D2}", currentTimeSlotService.serviceStartTime.Hours, currentTimeSlotService.serviceStartTime.Minutes);
+          appointmentData.EndingTime = string.Format("{0:D2}:{1:D2}", currentTimeSlotService.serviceEndTime.Hours, currentTimeSlotService.serviceEndTime.Minutes);
+          //Add services details row to datable
+          dtTblServicesToBeBooked.Rows.Add(appointmentData.DesiredDate, appointmentData.StartingTime,
+            appointmentData.EndingTime, serviceNumber, appointmentData.HairStylist,
+            (int)appointmentData.CustomerHairLength, appointmentData.IdCustomer,
+            DateTime.Now, appointmentData.RegisteredBy, appointmentData.Cancelled,
+            appointmentData.CancellationReason);
+          currentTimeSlotService.serviceStartTime = currentTimeSlotService.serviceEndTime;
+        }
+        
+        SetupStartingTimeForNextServiceToBeBooked(currentTimeSlotService, drService);
       }
       return dtTblServicesToBeBooked;
+    }
+
+    private static int ReturnServiceDurationAccordingToHairLenght(AppointmentDetails appointmentData, DataRow drService)
+    {
+      int serviceDuration = 0;
+
+      if ((int)appointmentData.CustomerHairLength == 1)
+        serviceDuration = Int32.Parse(drService["DurationAboveShoulder"].ToString());
+      else
+        serviceDuration = Int32.Parse(drService["DurationBelowShoulder"].ToString());
+
+      return serviceDuration;
+    }
+
+    private static void SetupStartingTimeForNextServiceToBeBooked(ProjectStructs.TimeSlotsStartingAndEndingTimes nextTimeSlotService, DataRow drService)
+    {
+      int processingTime = 0;
+      if (Int32.TryParse(drService["ProcessingTime"].ToString(), out processingTime))
+        processingTime = Int32.Parse(drService["ProcessingTime"].ToString());
+
+      nextTimeSlotService.serviceStartTime = nextTimeSlotService.serviceEndTime + new TimeSpan(0, processingTime, 0);
     } 
 
     private DataTable RetrieveStylistSchedule(AppointmentDetails customerAppointment)
@@ -577,16 +592,16 @@ public partial class _Default : System.Web.UI.Page
       Page.Validate("RegistrationInfoGroup");
       if (Page.IsValid == true)
       {
-        NewCustomerStruct.Client customer = CreateAHashOfNewCustomerDataEntered();
+        ProjectStructs.Client customer = CreateAHashOfNewCustomerDataEntered();
         var Client = ClientHair.CreateCustomerObjectAndAssignData(customer);
         RegisterCustomer(Client);
         PopulateCustomerNamesComboBox(LoadCustomerNamesIntoDataTable());
       }
     }
 
-    private NewCustomerStruct.Client CreateAHashOfNewCustomerDataEntered()
+    private ProjectStructs.Client CreateAHashOfNewCustomerDataEntered()
     {
-      NewCustomerStruct.Client customer;
+      ProjectStructs.Client customer;
       customer.id = 1;//arbitrary as i do not need the id for inserting new customers
       customer.firstName = TxtFirstName.Text.ToLower().Trim();
       customer.lastName = TxtLastName.Text.ToLower().Trim();
