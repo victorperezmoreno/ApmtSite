@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" ClientIDMode="Static" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" ClientIDMode="Static" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
 <!DOCTYPE html>
@@ -26,12 +26,10 @@
         }
       });
     });
-
     //Hide customer registration success/failure message
     $(document).ready(function () {
       $('.Attention').delay(5000).fadeOut('slow');
     });
-
     //Validate Services Checkbox
     function verifyCheckboxList(source, arguments) {
       var val = document.getElementById("ChkBxListServices");
@@ -48,7 +46,6 @@
       }
       arguments.IsValid = false;
     }
-
     //Validate booking date textbox in accordion
     function validateDate(txtbox) {
       if (txtbox.value == "") {
@@ -63,37 +60,47 @@
       }
     }
 
-    //calendar for booking accordion
+    //calendar for booking accordion 
     $(function () {
-      $("#TxtAppointmentDate").datepicker({
-        minDate: 0, maxDate: "+1M +10D", beforeShowDay: function (date) {
-          var day = date.getDay();
-          return [(day != 0), ''];
-        }
-      });
+      var dateTime = new Date();
+      var hour = dateTime.getHours();
+      var minute = dateTime.getMinutes();
+      if ((hour >= 18) && (minute >= 30)) {
+        $("#TxtAppointmentDate").datepicker({
+          minDate: 1, maxDate: "+1M +10D", beforeShowDay: function (date) {
+            var day = date.getDay();
+            return [(day != 0), ''];
+          }
+        });
+      }
+      else {
+        $("#TxtAppointmentDate").datepicker({
+          minDate: 0, maxDate: "+1M +10D", beforeShowDay: function (date) {
+            var day = date.getDay();
+            return [(day != 0), ''];
+          }
+        });
+      }
     });
 
     //Mask for telephone number
     $(document).ready(function () {
       $("#TxtPhoneCell").inputmask("(999)-999-9999");
     });
-
     //Validate FirstName textbox
     function validateFirstName(txtbox) {
       if (txtbox.value == "") {
-        txtbox.style.borderColor = "Red"; 
+        txtbox.style.borderColor = "Red";
         ValidatorEnable(document.getElementById("RequiredFieldValidator2"), true);
         return false;
       }
       else {
-        txtbox.style.borderColor = "#e2e2e2"; 
+        txtbox.style.borderColor = "#e2e2e2";
         ValidatorEnable(document.getElementById("RequiredFieldValidator2"), false);
       }
     }
-
     //Validate LastName textbox
     function validateLastName(txtbox) {
-
       if (txtbox.value == "") {
         txtbox.style.borderColor = "Red";
         ValidatorEnable(document.getElementById("RequiredFieldValidator3"), true);
@@ -104,7 +111,6 @@
         ValidatorEnable(document.getElementById("RequiredFieldValidator3"), false);
       }
     }
-
     //Validate Phone number textbox
     function validatePhone(txtbox) {
       if (txtbox.value == "") {
@@ -117,7 +123,6 @@
         ValidatorEnable(document.getElementById("RequiredFieldValidator4"), false);
       }
     }
-
     //Validate Email textbox
     function validateEmail(txtbox) {
       if (txtbox.value == "") {
@@ -130,7 +135,6 @@
         ValidatorEnable(document.getElementById("RequiredFieldValidator5"), false);
       }
     }
-
     //Validate AppointmentSummaryDate textbox in Main section
     function validateAppointmentSummaryDate(txtbox) {
       if (txtbox.value == "") {
@@ -146,13 +150,13 @@
     }
   </script>
     
-  <webopt:bundlereference runat="server" Path="~/StyleSheets" /> 
-  <webopt:bundlereference runat="server" Path="~/jquery" />
-  <webopt:bundlereference runat="server" Path="~/jqueryui" />
-  <webopt:bundlereference runat="server" Path="~/jqueryinputmask" /> 
-  <webopt:bundlereference runat="server" Path="~/jqueryinputmaskphonemin" />
-  <webopt:bundlereference runat="server" Path="~/jqueryinputmaskphoneru" />
-  <webopt:bundlereference runat="server" Path="~/jqueryinputmaskphonebe" />
+  <webopt:bundlereference ID="Bundlereference1" runat="server" Path="~/StyleSheets" /> 
+  <webopt:bundlereference ID="Bundlereference2" runat="server" Path="~/jquery" />
+  <webopt:bundlereference ID="Bundlereference3" runat="server" Path="~/jqueryui" />
+  <webopt:bundlereference ID="Bundlereference4" runat="server" Path="~/jqueryinputmask" /> 
+  <webopt:bundlereference ID="Bundlereference5" runat="server" Path="~/jqueryinputmaskphonemin" />
+  <webopt:bundlereference ID="Bundlereference6" runat="server" Path="~/jqueryinputmaskphoneru" />
+  <webopt:bundlereference ID="Bundlereference7" runat="server" Path="~/jqueryinputmaskphonebe" />
 </head>
 <body>
   <form id="form1" runat="server">

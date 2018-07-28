@@ -122,7 +122,7 @@ public partial class _Default : System.Web.UI.Page
       var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
       var dtTableAppointmentsForAllStylists = dtSetAppointmentsData.Tables[2];
       DataRow drTimeSlotData;
-      int totalSlotsToCreateForSameCustomer = 0;
+      //int totalSlotsToCreateForSameCustomer = 0;
       for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
       {
         drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
@@ -563,7 +563,7 @@ public partial class _Default : System.Web.UI.Page
 
     private void DisableStartTimesBeforeTimeOfTheDayIfTodaysDateIsSelected()
     {
-      int index = 0;
+      int index = 0; 
       TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
       foreach (ListItem timeSlot in DDLBeginTime.Items)
       {
