@@ -217,6 +217,9 @@
                   <div class="divNewApmtTableCell">
                     <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label><asp:TextBox ID="TxtAppointmentDate" runat="server" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>    
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="TxtAppointmentDate" CssClass="ErrorMessage" Display="Dynamic" validationgroup="BookingInfoGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
+                    <asp:CustomValidator runat="server" ID="CustValOutBusinessHours" CssClass="ErrorMessage"
+                      OnServerValidate="OutBusinessHours_ServerValidation" ValidationGroup="BookingInfoGroup"
+                      ErrorMessage="We close at 7pm">We close at 7pm</asp:CustomValidator>
                   </div>
                   <div class="divNewApmtTableCell">
                     <asp:UpdatePanel ID="UpdtPanelStartTime" UpdateMode="Conditional" runat="server">

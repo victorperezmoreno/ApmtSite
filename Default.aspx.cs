@@ -563,8 +563,9 @@ public partial class _Default : System.Web.UI.Page
 
     private void DisableStartTimesBeforeTimeOfTheDayIfTodaysDateIsSelected()
     {
-      int index = 0; 
-      TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
+      int index = 0;
+      DateTime easternTime = RetrieveEasternTimeZoneFromUTCTime();
+      TimeSpan timeOfDay = easternTime.TimeOfDay;
       foreach (ListItem timeSlot in DDLBeginTime.Items)
       {
         TimeSpan serviceStartTime = TimeSpan.Parse(timeSlot.Text.ToString().Trim());
@@ -724,6 +725,34 @@ public partial class _Default : System.Web.UI.Page
       return dtTableComboBoxCustomerNames;
     }
    
+   protected void OutBusinessHours_ServerValidation(object source, ServerValidateEventArgs args)
+   {
+     DateTime dateSelected = Convert.ToDateTime(TxtAppointmentDate.Text.ToString().Trim());
+     DateTime easternTime = RetrieveEasternTimeZoneFromUTCTime();
+     
+     if (dateSelected.Date == easternTime.Date)
+     {
+       TimeSpan timeOfDay = easternTime.TimeOfDay;
+       TimeSpan latestTimeToBookAnAppointment = TimeSpan.Parse(AppConstants.TimeToBookAnAppointment.LatestTimeToBookAnAppointment);
+       if (timeOfDay > latestTimeToBookAnAppointment)
+       {
+         args.IsValid = false;
+       }
+       else
+       {
+         args.IsValid = true;
+       }
+     }
+   }
+
+   private static DateTime RetrieveEasternTimeZoneFromUTCTime()
+   {
+     DateTime utcTime = DateTime.UtcNow;
+     TimeZoneInfo estTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+     DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, estTimeZone);
+     return easternTime;
+   }
+
     protected void TxtSummaryDateChange(object sender, EventArgs e)
     {
       PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());

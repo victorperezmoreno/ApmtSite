@@ -20,6 +20,11 @@ public class AppConstants
     public const int TimeSlotToDisplayInScheduleInMinutes = 30;
   }
 
+  public static class TimeToBookAnAppointment
+  {
+    public const string LatestTimeToBookAnAppointment = "18:30";
+  }
+
 	public AppConstants()
 	{
 		//
