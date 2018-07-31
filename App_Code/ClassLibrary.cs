@@ -12,6 +12,14 @@ using System.Linq;
 /// </summary>
 public class ClassLibrary
 {
+  public static DateTime RetrieveEasternTimeZoneFromUTCTime()
+  {
+    DateTime utcTime = DateTime.UtcNow;
+    TimeZoneInfo estTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+    DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, estTimeZone);
+    return easternTime;
+  }
+
 /// <summary>
 /// Method to call stored procedure and return data from database
 /// </summary>
@@ -69,21 +77,20 @@ public static class Popup
 /// </summary> 
 /// <param name="message">The message to appear in the popup window.</param> 
 public static void Message(string message)
-{
-   // Cleans the message to allow single quotation marks 
-   string cleanMessage = message.Replace("'", "\\'");
-   string script = "<script type=\"text/javascript\">alert('" + cleanMessage + "');</script>";
+  {
+    // Cleans the message to allow single quotation marks 
+    string cleanMessage = message.Replace("'", "\\'");
+    string script = "<script type=\"text/javascript\">alert('" + cleanMessage + "');</script>";
 
-   // Gets the executing web page 
-   Page page = HttpContext.Current.CurrentHandler as Page;
+    // Gets the executing web page 
+    Page page = HttpContext.Current.CurrentHandler as Page;
 
-   // Checks if the handler is a Page and that the script isn't allready on the Page 
-   if (page != null && !page.ClientScript.IsClientScriptBlockRegistered("alert"))
-   {
+    // Checks if the handler is a Page and that the script isn't allready on the Page 
+    if (page != null && !page.ClientScript.IsClientScriptBlockRegistered("alert"))
+    {
       page.ClientScript.RegisterClientScriptBlock(typeof(Popup), "alert", script);
-   }
-}
-  
+    }
+  }
   
 }
   

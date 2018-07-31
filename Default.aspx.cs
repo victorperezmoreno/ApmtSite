@@ -10,12 +10,12 @@ public partial class _Default : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
       if (!IsPostBack)
-      {  
-        TxtAppointmentSummary.Text = DateTime.Today.ToShortDateString();
+      {
+        TxtAppointmentSummary.Text = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime().ToShortDateString();    
         PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());
         /*Filling up the checkboxlist, services, names and times dropdownlist*/
         LoadServicesAndStylistForAppointmentBooking();
-        TxtAppointmentDate.Text = DateTime.Today.ToShortDateString();
+        TxtAppointmentDate.Text = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime().ToShortDateString();
         DetermineWhetherDateForBookingAppointmentSelectedIsToday();
       }
     }
@@ -122,7 +122,7 @@ public partial class _Default : System.Web.UI.Page
       var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
       var dtTableAppointmentsForAllStylists = dtSetAppointmentsData.Tables[2];
       DataRow drTimeSlotData;
-      int totalSlotsToCreateForSameCustomer = 0;
+      //int totalSlotsToCreateForSameCustomer = 0;
       for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
       {
         drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
@@ -375,7 +375,7 @@ public partial class _Default : System.Web.UI.Page
           dtTblServicesToBeBooked.Rows.Add(appointmentData.DesiredDate, appointmentData.StartingTime,
             appointmentData.EndingTime, serviceNumber, appointmentData.HairStylist,
             (int)appointmentData.CustomerHairLength, appointmentData.IdCustomer,
-            DateTime.Now, appointmentData.RegisteredBy, appointmentData.Cancelled,
+            ClassLibrary.RetrieveEasternTimeZoneFromUTCTime(), appointmentData.RegisteredBy, appointmentData.Cancelled,
             appointmentData.CancellationReason);
           currentTimeSlotService.serviceStartTime = currentTimeSlotService.serviceEndTime;
         }
@@ -514,7 +514,6 @@ public partial class _Default : System.Web.UI.Page
           command.Parameters.Add("@AppointmentDetails", SqlDbType.Structured).Value = dtTblServicesToBeBooked;
           command.Parameters.Add("@OperationStatus", SqlDbType.NVarChar, 23).Direction = ParameterDirection.Output;
 
-
           appointmentDateSelected = dtTblServicesToBeBooked.Rows[0].Field<DateTime>("AppointmentDate").ToShortDateString();
           connection.Open();
           command.ExecuteNonQuery();
@@ -550,7 +549,8 @@ public partial class _Default : System.Web.UI.Page
       if (TxtAppointmentDate.Text.Trim() != "")
       {
         DateTime dateSelected = Convert.ToDateTime(TxtAppointmentDate.Text.ToString().Trim());
-        if (dateSelected.Date == DateTime.Now.Date)
+        DateTime easternTime = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime();
+        if (dateSelected.Date == easternTime.Date)
         {
           DisableStartTimesBeforeTimeOfTheDayIfTodaysDateIsSelected();
         }
@@ -564,20 +564,29 @@ public partial class _Default : System.Web.UI.Page
     private void DisableStartTimesBeforeTimeOfTheDayIfTodaysDateIsSelected()
     {
       int index = 0;
-      TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
-      foreach (ListItem timeSlot in DDLBeginTime.Items)
+      DateTime easternTime = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime();
+      TimeSpan timeOfDay = easternTime.TimeOfDay;
+      TimeSpan latestTimeToBookAnAppointment = TimeSpan.Parse(AppConstants.TimeToBookAnAppointment.LatestTimeToBookAnAppointment);
+      if (timeOfDay > latestTimeToBookAnAppointment)
       {
-        TimeSpan serviceStartTime = TimeSpan.Parse(timeSlot.Text.ToString().Trim());
-        if (serviceStartTime < timeOfDay)
+        DDLBeginTime.Enabled = false;
+      }
+      else
+      {
+        foreach (ListItem timeSlot in DDLBeginTime.Items)
         {
-          timeSlot.Attributes.Add("disabled", "disabled");
+          TimeSpan serviceStartTime = TimeSpan.Parse(timeSlot.Text.ToString().Trim());
+          if (serviceStartTime < timeOfDay)
+          {
+            timeSlot.Attributes.Add("disabled", "disabled");
+          }
+          else
+          {
+            DDLBeginTime.SelectedIndex = index;
+            break;
+          }
+          index++;
         }
-        else
-        {
-          DDLBeginTime.SelectedIndex = index;
-          break;
-        }
-        index++;
       }
     }
 
@@ -724,6 +733,25 @@ public partial class _Default : System.Web.UI.Page
       return dtTableComboBoxCustomerNames;
     }
    
+   protected void OutBusinessHours_ServerValidation(object source, ServerValidateEventArgs args)
+   {
+     DateTime dateSelected = Convert.ToDateTime(TxtAppointmentDate.Text.ToString().Trim());
+     DateTime easternTime = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime();
+     if (dateSelected.Date == easternTime.Date)
+     {
+       TimeSpan timeOfDay = easternTime.TimeOfDay;
+       TimeSpan latestTimeToBookAnAppointment = TimeSpan.Parse(AppConstants.TimeToBookAnAppointment.LatestTimeToBookAnAppointment);
+       if (timeOfDay > latestTimeToBookAnAppointment)
+       {
+         args.IsValid = false;
+       }
+       else
+       {
+         args.IsValid = true;
+       }
+     }
+   }
+
     protected void TxtSummaryDateChange(object sender, EventArgs e)
     {
       PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());
