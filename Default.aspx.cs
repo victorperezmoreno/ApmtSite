@@ -25,7 +25,7 @@ public partial class _Default : System.Web.UI.Page
       var dtSetAppointmentInformation = LoadAppointmentInformation(dateSelected);
       if (dtSetAppointmentInformation.Tables.Count == 0)
       {
-        AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, AppConstants.LblMessage.AppointmentsDatasetEmpty);
+        AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, AppConstants.LblMessage.AppointmentsDatasetEmpty);
       }
       else
         {
@@ -65,7 +65,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error reading from Database. Please try again.";
           //LblMessageToUser.Visible = true;
         }
@@ -254,7 +254,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
@@ -307,8 +307,9 @@ public partial class _Default : System.Web.UI.Page
         {
           string bookingDateSelected = BookServices(dtTableServicesToBeBooked);
           TxtAppointmentSummary.Text = bookingDateSelected;
-          PopulateGridWithAppointmentData(bookingDateSelected);
+          PopulateGridWithAppointmentData(bookingDateSelected);    
         }
+        DetermineWhetherDateForBookingAppointmentSelectedIsToday();
       }
     }
 
@@ -337,7 +338,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
@@ -431,7 +432,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
@@ -526,7 +527,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);        
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);        
           //LblMessageToUser.Text = "Error inserting into the database.";
           LblMessageToUser.Visible = true;
         }
@@ -541,7 +542,6 @@ public partial class _Default : System.Web.UI.Page
     protected void TxtAppointmentDateChange(object sender, EventArgs e)
     {
       DetermineWhetherDateForBookingAppointmentSelectedIsToday();
-
     }
 
     private void DetermineWhetherDateForBookingAppointmentSelectedIsToday()
@@ -638,7 +638,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error inserting into the database.";
           LblMessageToUser.Visible = true;
         }
@@ -655,20 +655,20 @@ public partial class _Default : System.Web.UI.Page
       {
         //Success Inserting
         case 0:
-          AssignMessageToLabelWithResultFromDataBaseOperation("#4F8A10", "#DFF2BF", messageFromInserting);
+          AssignMessageToLabelWithResultFromOperation("#4F8A10", "#DFF2BF", messageFromInserting);
           break;
         //Error inserting in Stored Procedure
         case 1:
-          AssignMessageToLabelWithResultFromDataBaseOperation("#D8000C", "#FFD2D2", messageFromInserting);
+          AssignMessageToLabelWithResultFromOperation("#D8000C", "#FFD2D2", messageFromInserting);
           break;
         //Customer already exists in Database
         case 2:
-          AssignMessageToLabelWithResultFromDataBaseOperation("#9F6000", "#FEEFB3", messageFromInserting);
+          AssignMessageToLabelWithResultFromOperation("#9F6000", "#FEEFB3", messageFromInserting);
           break;
       }
     }
  
-     private void AssignMessageToLabelWithResultFromDataBaseOperation(string labelForeColor, string labelBackgroundColor, string messageToUser)
+     private void AssignMessageToLabelWithResultFromOperation(string labelForeColor, string labelBackgroundColor, string messageToUser)
     {
       LblMessageToUser.ForeColor = System.Drawing.ColorTranslator.FromHtml(labelForeColor);
       LblMessageToUser.Style["background-color"] = labelBackgroundColor;
@@ -721,7 +721,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromDataBaseOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
           //LblMessageToUser.Text = "Error reading from the database.";
           LblMessageToUser.Visible = true;
         }
