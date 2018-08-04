@@ -10,8 +10,12 @@ public class AppConstants
 {
   public static class LblMessage
   {
-    public const string Forecolor = "#D8000C";
-    public const string BackgroundColor = "#FFD2D2";
+    public const string SuccessForecolor = "#4F8A10";
+    public const string SuccessBackgroundColor = "#DFF2BF";
+    public const string ErrorForecolor = "#D8000C";
+    public const string ErrorBackgroundColor = "#FFD2D2";
+    public const string WarningForecolor = "#9F6000";
+    public const string WarningBackgroundColor = "#FEEFB3";
     public const string AppointmentsDatasetEmpty = "No data in appointments tables";   
   }
 

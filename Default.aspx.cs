@@ -25,7 +25,7 @@ public partial class _Default : System.Web.UI.Page
       var dtSetAppointmentInformation = LoadAppointmentInformation(dateSelected);
       if (dtSetAppointmentInformation.Tables.Count == 0)
       {
-        AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, AppConstants.LblMessage.AppointmentsDatasetEmpty);
+        AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, AppConstants.LblMessage.AppointmentsDatasetEmpty);
       }
       else
         {
@@ -65,13 +65,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error reading from Database. Please try again.";
-          //LblMessageToUser.Visible = true;
-        }
-        finally
-        {
-          //connection.Close();
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
         }
       }
       return dtSetAppointmentsPerSpecificDate;
@@ -184,9 +178,7 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            LblMessageToUser.Text = "There are no hair lenght options in Database";
-            LblMessageToUser.Visible = true;
-            //ClassLibrary.Popup.Message("There are no hair lenght options in Database");
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "There are no hair lenght options in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[1].Rows.Count != 0)
@@ -198,9 +190,7 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            LblMessageToUser.Text = "There are no services in Database";
-            LblMessageToUser.Visible = true;
-            //ClassLibrary.Popup.Message("There are no services in Database");
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "There are no services in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[2].Rows.Count != 0)
@@ -212,9 +202,7 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            LblMessageToUser.Text = "There are no stylist in Database";
-            LblMessageToUser.Visible = true;
-            //ClassLibrary.Popup.Message("There are no stylist in Database");
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "There are no stylist in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[3].Rows.Count != 0)
@@ -226,9 +214,7 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            LblMessageToUser.Text = "There are no service start times in Database";
-            LblMessageToUser.Visible = true;
-            //ClassLibrary.Popup.Message("There are no service start times in Database");
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "There are no service start times in Database");
           }
 
           if (PopulateDropDownListForBookingAppointments.Tables[4].Rows.Count != 0)
@@ -242,9 +228,7 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            LblMessageToUser.Text = "There are no Customer Names in Database";
-            LblMessageToUser.Visible = true;
-            //ClassLibrary.Popup.Message("There are no Customer names in Database");
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "There are no Customer Names in Database");
           }
 
           command.Dispose();
@@ -254,14 +238,11 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error reading from the database.";
-          LblMessageToUser.Visible = true;
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
         }
         finally
         {
           adapterDropDownListForBookingAppointments.Dispose();
-          //connection.Close();
         }
       }
     }
@@ -301,7 +282,7 @@ public partial class _Default : System.Web.UI.Page
         
         if (DetermineTimeSlotsAvailabilityForServicesToBeBooked(dtTableStylistSchedule, dtTableServicesToBeBooked))
         {
-          LblMessageToUser.Text = "Please select another time";
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "Please select another time");
         }
         else
         {
@@ -338,13 +319,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error reading from the database.";
-          LblMessageToUser.Visible = true;
-        }
-        finally
-        {
-          //connection.Close();
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
         }
       }
       return dtTableServicesDetails;
@@ -432,13 +407,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error reading from the database.";
-          LblMessageToUser.Visible = true;
-        }
-        finally
-        {
-          //connection.Close();
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
         }
       }
       return dtTableStylistAppointments;
@@ -513,13 +482,17 @@ public partial class _Default : System.Web.UI.Page
           var command = new SqlCommand("StoredPro_InsertAppointmentsBatch", connection);
           command.CommandType = CommandType.StoredProcedure;
           command.Parameters.Add("@AppointmentDetails", SqlDbType.Structured).Value = dtTblServicesToBeBooked;
-          command.Parameters.Add("@OperationStatus", SqlDbType.NVarChar, 23).Direction = ParameterDirection.Output;
+          command.Parameters.Add("@OperationStatus", SqlDbType.Bit).Direction = ParameterDirection.Output;
 
           appointmentDateSelected = dtTblServicesToBeBooked.Rows[0].Field<DateTime>("AppointmentDate").ToShortDateString();
           connection.Open();
-          command.ExecuteNonQuery();
-          LblMessageToUser.Text = command.Parameters["@OperationStatus"].Value.ToString().Trim();
-          LblMessageToUser.Visible = true;
+          command.ExecuteNonQuery(); 
+          if (!(bool)command.Parameters["@OperationStatus"].Value)
+          {
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, "SP Error booking appointment");        
+          }
+
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.SuccessForecolor, AppConstants.LblMessage.SuccessBackgroundColor, "Appointment Booked!");        
           command.Dispose();
         }
         catch (System.Data.SqlClient.SqlException ex)
@@ -527,13 +500,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);        
-          //LblMessageToUser.Text = "Error inserting into the database.";
-          LblMessageToUser.Visible = true;
-        }
-        finally
-        {
-          //connection.Close();
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);        
         }
       }
       return appointmentDateSelected;
@@ -595,7 +562,6 @@ public partial class _Default : System.Web.UI.Page
       args.IsValid = ChkBxListServices.SelectedItem != null;
     }
 
-  //Insert new customer
     protected void BtnNewCustomer_Click(object sender, EventArgs e)
     {
       Page.Validate("RegistrationInfoGroup");
@@ -638,13 +604,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error inserting into the database.";
-          LblMessageToUser.Visible = true;
-        }
-        finally
-        {
-          //connection.Close();
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
         }
       }
     }
@@ -655,15 +615,15 @@ public partial class _Default : System.Web.UI.Page
       {
         //Success Inserting
         case 0:
-          AssignMessageToLabelWithResultFromOperation("#4F8A10", "#DFF2BF", messageFromInserting);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.SuccessForecolor, AppConstants.LblMessage.SuccessBackgroundColor, messageFromInserting);
           break;
         //Error inserting in Stored Procedure
         case 1:
-          AssignMessageToLabelWithResultFromOperation("#D8000C", "#FFD2D2", messageFromInserting);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, messageFromInserting);
           break;
         //Customer already exists in Database
         case 2:
-          AssignMessageToLabelWithResultFromOperation("#9F6000", "#FEEFB3", messageFromInserting);
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, messageFromInserting);
           break;
       }
     }
@@ -684,9 +644,7 @@ public partial class _Default : System.Web.UI.Page
           }
           else
           {
-            LblMessageToUser.Text = "There are no Customer names in Database";
-            LblMessageToUser.Visible = true;
-            //ClassLibrary.Popup.Message("There are no Customer names in Database");
+            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, "There are no Customer names in Database");
           }
     }
     
@@ -721,13 +679,7 @@ public partial class _Default : System.Web.UI.Page
           string str;
           str = "Source:" + ex.Source;
           str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.Forecolor, AppConstants.LblMessage.BackgroundColor, str);
-          //LblMessageToUser.Text = "Error reading from the database.";
-          LblMessageToUser.Visible = true;
-        }
-        finally
-        { 
-          //connection.Close();
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
         }
       }
       return dtTableComboBoxCustomerNames;
