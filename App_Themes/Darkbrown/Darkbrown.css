@@ -332,20 +332,6 @@ br {clear:left;  }
   height:100%;
 }
 
-/*.sidenav a {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    color: #FFFFFF; 
-    display: block;
-}
-
-.sidenav a:hover {
-    color: #f1f1f1;
-    background-color:#770000;
-}*/
-
 .mainCalendar 
 {
   text-align: center;
@@ -440,7 +426,7 @@ br {clear:left;  }
   vertical-align: middle;
 }
 
-.NewApmtTable /*New appointment Table Formatting*/
+/*.NewApmtTable 
 {
    width: 30%;
    border: solid 2px #A9A9A9;
@@ -481,7 +467,6 @@ br {clear:left;  }
 	  color: #333;
 	  font-size: 1.0em;
 	  margin: 2px 0 2px 0;
-	  /*padding: 2px;*/
   }
 
 .NewApmtTable tr td input[type=checkbox] 
@@ -500,7 +485,7 @@ br {clear:left;  }
     font-size: 11px;
     margin-right:auto;
     vertical-align:middle;
-  }
+  }*/
 
   /*Here starts the div table for new appointment*/
 .divNewApmtTable /*New appointment Table Formatting*/
@@ -520,7 +505,6 @@ br {clear:left;  }
 
   .divNewApmtTableCell label, span 
   {
-    /*font-weight: bold;*/ 
     vertical-align: middle; 
     font-family: Verdana, Arial;
   }
@@ -548,16 +532,11 @@ br {clear:left;  }
 	  color: #333;
 	  font-size: 1.1em;
 	  margin: 2px 0 2px 0;
-	  /*padding: 2px;*/
   }
 
 .divNewApmtTableCell input[type=checkbox] 
   {
     vertical-align: middle;
-    /*height:12px;*/
-    /*position: relative;*/
-    /*float:left;*/
-    /*clear: both;*/
   }
 
   .divNewApmtTableCell input[type=checkbox] label 
@@ -570,7 +549,7 @@ br {clear:left;  }
 
 .divNewCustomerTable /*New Customer Div Formatting*/
 {
-   width: 99%; /*25%*/
+   width: 99%;
    border: solid 1px #A9A9A9;
    margin: 0 auto;
 }
@@ -586,7 +565,6 @@ br {clear:left;  }
 
   .divNewCustomerTableCell label, span
   {
-    /*font-weight:bold;*/
     vertical-align: middle;  
     font-family: Verdana, Arial;
   }
@@ -608,7 +586,6 @@ br {clear:left;  }
 .ScheduleGridview /** main grid */
 {
     width: 80%;
-    /*border: solid 2px #000000;*/
     position:relative;
     display:block;
     margin: 0 auto;
@@ -731,7 +708,6 @@ br {clear:left;  }
 {
   margin: 0;
   padding: 0;
-  /*background-image: url(windows-arrow.gif);*/
   display:block;
   background-position: center;
   border: 0px none;
@@ -751,7 +727,7 @@ br {clear:left;  }
   color: #606060;
   font-family:Verdana, Arial;
   font-size: 1.3em;
-  border: 1px solid black;
+  border: 1px solid #A9A9A9;
   padding: 4px;
   background-image: url(http://localhost:54531/App_Themes/Darkbrown/Images/ArrowDown.png);  
   background-repeat: no-repeat;
@@ -771,7 +747,7 @@ br {clear:left;  }
   color: #edeeef;
   font-family:Verdana, Arial;
   font-size: 1.3em;
-  border: 1px solid black;
+  border: 1px solid #A9A9A9;
   padding: 4px;
   background-image: url(http://localhost:54531/App_Themes/Darkbrown/Images/ArrowUp.png);
   background-repeat: no-repeat;

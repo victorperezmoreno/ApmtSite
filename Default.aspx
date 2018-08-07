@@ -16,7 +16,7 @@
   <script src="Scripts/inputmask/phone-codes/phone-ru.min.js"></script>
   <script src="Scripts/inputmask/phone-codes/phone-be.min.js"></script>
   
-  <script>
+  <script> 
     //calendar for summary of appointments on a given date
     $(function () {
       $("#TxtAppointmentSummary").datepicker({
@@ -27,9 +27,11 @@
       });
     });
     //Hide customer registration success/failure message
-    $(document).ready(function () {
-      $('.Attention').delay(5000).fadeOut('slow');
-    });
+    function vanishMessageCenter() {
+      $(document).ready(function () {
+        $('.Attention').delay(5000).fadeOut('slow');
+      });
+    }
     //Validate Services Checkbox
     function verifyCheckboxList(source, arguments) {
       var val = document.getElementById("ChkBxListServices");
@@ -148,6 +150,20 @@
         ValidatorEnable(document.getElementById("RequiredFieldValidator8"), false);
       }
     }
+
+   //As the page is partially updated with the Ajax UpdatePanel
+   //This code helps to redisplay the datepicker after booking an appointment--%>
+    $(document).ready(function () {
+      Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+      function EndRequestHandler(sender, args) {
+        $('#TxtAppointmentSummary').datepicker({
+          minDate: -2, maxDate: "+1M +10D", beforeShowDay: function (date) {
+            var day = date.getDay();
+            return [(day != 0), ''];
+          }
+        });
+      }
+    });
   </script>
     
   <webopt:bundlereference ID="Bundlereference1" runat="server" Path="~/StyleSheets" /> 
@@ -191,39 +207,46 @@
               <Header>Booking</Header>
               <Content>
                 <div class="divNewApmtTable" id="AppointmentTable">
+                  <asp:UpdatePanel ID="UpdtPanelAppointment" UpdateMode="Conditional" runat="server" ChildrenAsTriggers="False">
+                    <Triggers>
+                      <asp:AsyncPostBackTrigger ControlID="ApmtButton" EventName="Click" />
+                    </Triggers>
+                    <ContentTemplate>
+                      <div class="divNewApmtTableCell">
+                        <asp:Label ID="LblName" runat="server" Text="Name: "></asp:Label>
+                        <ajaxToolkit:ComboBox ID="CmbBxName" runat="server" CssClass="WindowsStyle" AutoCompleteMode="Append"
+                          MaxLength="0" Style="display: inline;" onclientblur="OnClientBlur">
+                        </ajaxToolkit:ComboBox>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ControlToValidate="CmbBxName$CmbBxName_TextBox" CssClass="ErrorMessage" Display="Dynamic" ValidationGroup="BookingInfoGroup" ErrorMessage="Enter a Name" InitialValue="Please Select">Enter a Name</asp:RequiredFieldValidator>
+                      </div>
+                      <div class="divNewApmtTableCell">
+                        <asp:Label ID="LblHairLength" runat="server" Text="Hair Length: "></asp:Label>
+                        <asp:DropDownList ID="DDLHairLength" runat="server"></asp:DropDownList>
+                      </div>
+                      <div class="divNewApmtTableCell">
+                        <asp:Label ID="LblServiceName" runat="server" Text="Service: "></asp:Label>
+                      </div>
+                      <div class="divNewApmtTableCell">
+                        <asp:CheckBoxList ID="ChkBxListServices" runat="server" Width="150px"></asp:CheckBoxList><asp:CustomValidator runat="server" ID="CustValServicesList" CssClass="ErrorMessage"
+                          ClientValidationFunction="verifyCheckboxList" OnServerValidate="ServicesList_ServerValidation" EnableClientScript="true"
+                          ValidationGroup="BookingInfoGroup" ErrorMessage="Pick at least one service">Pick a service</asp:CustomValidator>
+                      </div>
+                      <div class="divNewApmtTableCell">
+                        <asp:Label ID="LblStylist" runat="server" Text="Stylist: "></asp:Label>
+                        <asp:DropDownList ID="DDLStylist" runat="server"></asp:DropDownList>
+                      </div>
+                      <div class="divNewApmtTableCell">
+                        <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label><asp:TextBox ID="TxtAppointmentDate" runat="server" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="TxtAppointmentDate" CssClass="ErrorMessage" Display="Dynamic" ValidationGroup="BookingInfoGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
+                        <br />
+                        <asp:CustomValidator runat="server" ID="CustValOutBusinessHours" CssClass="ErrorMessage"
+                          OnServerValidate="OutBusinessHours_ServerValidation" ValidationGroup="BookingInfoGroup"
+                          ErrorMessage="We close at 7pm">We close at 7pm</asp:CustomValidator>
+                      </div>
+                    </ContentTemplate>
+                  </asp:UpdatePanel>
                   <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblName" runat="server" Text="Name: "></asp:Label>
-                    <ajaxToolkit:ComboBox ID="CmbBxName" runat="server" CssClass="WindowsStyle" AutoCompleteMode="Append"
-                      MaxLength="0" Style="display: inline;" onclientblur="OnClientBlur">
-                    </ajaxToolkit:ComboBox>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ControlToValidate="CmbBxName$CmbBxName_TextBox" CssClass="ErrorMessage" Display="Dynamic" validationgroup="BookingInfoGroup" ErrorMessage="Enter a Name" InitialValue="Please Select">Enter a Name</asp:RequiredFieldValidator>
-                  </div>
-                  <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblHairLength" runat="server" Text="Hair Length: "></asp:Label>
-                    <asp:DropDownList ID="DDLHairLength" runat="server"></asp:DropDownList>
-                  </div>
-                  <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblServiceName" runat="server" Text="Service: "></asp:Label>
-                  </div>
-                  <div class="divNewApmtTableCell">
-                    <asp:CheckBoxList ID="ChkBxListServices" runat="server" Width="150px"></asp:CheckBoxList><asp:CustomValidator runat="server" ID="CustValServicesList" CssClass="ErrorMessage"
-                      ClientValidationFunction="verifyCheckboxList" OnServerValidate="ServicesList_ServerValidation" EnableClientScript="true" 
-                      validationgroup="BookingInfoGroup" ErrorMessage="Pick at least one service">Pick a service</asp:CustomValidator>
-                  </div>
-                  <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblStylist" runat="server" Text="Stylist: "></asp:Label>
-                    <asp:DropDownList ID="DDLStylist" runat="server"></asp:DropDownList>
-                  </div>
-                  <div class="divNewApmtTableCell">
-                    <asp:Label ID="LblDate" runat="server" Text="Date: "></asp:Label><asp:TextBox ID="TxtAppointmentDate" runat="server" MaxLength="10" onblur="return validateDate(this);" OnTextChanged="TxtAppointmentDateChange" AutoPostBack="True"></asp:TextBox>    
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="TxtAppointmentDate" CssClass="ErrorMessage" Display="Dynamic" validationgroup="BookingInfoGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
-                    <br />
-                    <asp:CustomValidator runat="server" ID="CustValOutBusinessHours" CssClass="ErrorMessage"
-                      OnServerValidate="OutBusinessHours_ServerValidation" ValidationGroup="BookingInfoGroup"
-                      ErrorMessage="We close at 7pm">We close at 7pm</asp:CustomValidator>
-                  </div>
-                  <div class="divNewApmtTableCell">
-                    <asp:UpdatePanel ID="UpdtPanelStartTime" UpdateMode="Conditional" runat="server">
+                    <asp:UpdatePanel ID="UpdtPanelStartTime" UpdateMode="Conditional" runat="server" ChildrenAsTriggers="False">
                       <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="TxtAppointmentDate" EventName="TextChanged" />
                       </Triggers>
@@ -242,46 +265,50 @@
               <Header>New User</Header>
               <Content>
                 <div class="divNewCustomerTable" id="NewCustomerTable">
-                  <div class="divNewCustomerTableCell">
-                    <asp:Label ID="LblFirstName" runat="server" Text="First Name"></asp:Label>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:TextBox ID="TxtFirstName" runat="server" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 32) || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122));" MaxLength="15" onblur="return validateFirstName(this);"></asp:TextBox>
-                    <br />
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="TxtFirstName" CssClass="ErrorMessage" Display="Dynamic" validationgroup="RegistrationInfoGroup" ErrorMessage="Enter customer first name">Please enter first name</asp:RequiredFieldValidator>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:Label ID="LblLastName" runat="server" Text="Last Name"></asp:Label>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:TextBox ID="TxtLastName" runat="server" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 32) || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122));" MaxLength="20" onblur="return validateLastName(this);"></asp:TextBox>
-                    <br />
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="TxtLastName" CssClass="ErrorMessage" Display="Dynamic" validationgroup="RegistrationInfoGroup" ErrorMessage="Enter customer last name">Please enter last name</asp:RequiredFieldValidator>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:Label ID="LblPhoneNumber" runat="server" Text="Cell Phone"></asp:Label>
-                    <asp:Label ID="LblPhonePlaceholder" runat="server" Text="(Only numbers)" CssClass="LabelPlaceHolder"></asp:Label>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:TextBox ID="TxtPhoneCell" runat="server" TextMode="Phone" PlaceHolder="(XXX) XXX-XXXX" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 9) || (event.keyCode >= 45 && event.keyCode <= 57));" MaxLength="14" onblur="return validatePhone(this);"></asp:TextBox><br />
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ControlToValidate="TxtPhoneCell" CssClass="ErrorMessage" Display="Dynamic" validationgroup="RegistrationInfoGroup" ErrorMessage="Enter a phone number">Please enter phone number</asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="TxtPhoneCell" CssClass="ErrorMessage" Display="Dynamic" ErrorMessage="Enter a valid phone number"
-                      ValidationExpression="(?:(?:(\s*\(?([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\)?\s*(?:[.-]\s*)?)([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})">Enter valid phone number</asp:RegularExpressionValidator>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:Label ID="LblEmail" runat="server" Text="Email"></asp:Label>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:TextBox ID="TxtEmail" runat="server" TextMode="Email" MaxLength="20" onblur="return validateEmail(this);"></asp:TextBox>
-                    <br />
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ControlToValidate="TxtEmail" CssClass="ErrorMessage" Display="Dynamic" validationgroup="RegistrationInfoGroup" ErrorMessage="Enter customer email">Please enter email</asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server"
-                      ControlToValidate="TxtEmail" ErrorMessage="Enter correct email" CssClass="ErrorMessage"
-                      ValidationExpression="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"></asp:RegularExpressionValidator>
-                  </div>
-                  <div class="divNewCustomerTableCell">
-                    <asp:Button ID="NewCustomerButton" runat="server" Text="Register!" OnClick="BtnNewCustomer_Click" CssClass="submitButton" validationgroup="RegistrationInfoGroup" />
-                  </div>
+                  <asp:UpdatePanel ID="UpdtePanelCustomerRegistration" UpdateMode="Conditional" runat="server" ChildrenAsTriggers="False">
+                    <ContentTemplate>
+                      <div class="divNewCustomerTableCell">
+                        <asp:Label ID="LblFirstName" runat="server" Text="First Name"></asp:Label>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:TextBox ID="TxtFirstName" runat="server" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 32) || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122));" MaxLength="15" onblur="return validateFirstName(this);"></asp:TextBox>
+                        <br />
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="TxtFirstName" CssClass="ErrorMessage" Display="Dynamic" ValidationGroup="RegistrationInfoGroup" ErrorMessage="Enter customer first name">Please enter first name</asp:RequiredFieldValidator>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:Label ID="LblLastName" runat="server" Text="Last Name"></asp:Label>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:TextBox ID="TxtLastName" runat="server" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 32) || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122));" MaxLength="20" onblur="return validateLastName(this);"></asp:TextBox>
+                        <br />
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="TxtLastName" CssClass="ErrorMessage" Display="Dynamic" ValidationGroup="RegistrationInfoGroup" ErrorMessage="Enter customer last name">Please enter last name</asp:RequiredFieldValidator>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:Label ID="LblPhoneNumber" runat="server" Text="Cell Phone"></asp:Label>
+                        <asp:Label ID="LblPhonePlaceholder" runat="server" Text="(Only numbers)" CssClass="LabelPlaceHolder"></asp:Label>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:TextBox ID="TxtPhoneCell" runat="server" TextMode="Phone" PlaceHolder="(XXX) XXX-XXXX" onkeydown="return ((event.keyCode >= 8 && event.keyCode <= 9) || (event.keyCode >= 45 && event.keyCode <= 57));" MaxLength="14" onblur="return validatePhone(this);"></asp:TextBox><br />
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ControlToValidate="TxtPhoneCell" CssClass="ErrorMessage" Display="Dynamic" ValidationGroup="RegistrationInfoGroup" ErrorMessage="Enter a phone number">Please enter phone number</asp:RequiredFieldValidator>
+                        <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="TxtPhoneCell" CssClass="ErrorMessage" Display="Dynamic" ErrorMessage="Enter a valid phone number"
+                          ValidationExpression="(?:(?:(\s*\(?([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\)?\s*(?:[.-]\s*)?)([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})">Enter valid phone number</asp:RegularExpressionValidator>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:Label ID="LblEmail" runat="server" Text="Email"></asp:Label>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:TextBox ID="TxtEmail" runat="server" TextMode="Email" MaxLength="40" onblur="return validateEmail(this);"></asp:TextBox>
+                        <br />
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ControlToValidate="TxtEmail" CssClass="ErrorMessage" Display="Dynamic" ValidationGroup="RegistrationInfoGroup" ErrorMessage="Enter customer email">Please enter email</asp:RequiredFieldValidator>
+                        <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server"
+                          ControlToValidate="TxtEmail" ErrorMessage="Enter correct email" CssClass="ErrorMessage"
+                          ValidationExpression="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"></asp:RegularExpressionValidator>
+                      </div>
+                      <div class="divNewCustomerTableCell">
+                        <asp:Button ID="NewCustomerButton" runat="server" Text="Register!" OnClick="BtnNewCustomer_Click" CssClass="submitButton" ValidationGroup="RegistrationInfoGroup" />
+                      </div>
+                    </ContentTemplate>
+                  </asp:UpdatePanel>
                 </div>
               </Content>
             </ajaxToolkit:AccordionPane>
@@ -289,10 +316,15 @@
         </ajaxToolkit:Accordion>
       </div>
        <div id="content">
-        <asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="Message to User" Visible="False"></asp:Label>
-        <asp:TextBox ID="TxtAppointmentSummary"  CssClass="mainCalendar" runat="server" MaxLength="10" onblur="return validateAppointmentSummaryDate(this);" AutoPostBack="True" OnTextChanged="TxtSummaryDateChange"/>
+         <asp:UpdatePanel ID="UpdtPanelMessageCenter" UpdateMode="Conditional" runat="server" ChildrenAsTriggers="False">
+            <ContentTemplate>       
+             <asp:Label ID="LblMessageToUser" runat="server" CssClass="Attention" Text="Message to User" Visible="False"></asp:Label>
+             <asp:TextBox ID="TxtAppointmentSummary"  CssClass="mainCalendar" runat="server" MaxLength="10" onblur="return validateAppointmentSummaryDate(this);" AutoPostBack="True" OnTextChanged="TxtSummaryDateChange"/>
+            </ContentTemplate>
+         </asp:UpdatePanel>
+          
         <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ControlToValidate="TxtAppointmentSummary" CssClass="ErrorMessage" Display="Dynamic" validationgroup="ScheduledAppointmentsGroup" ErrorMessage="Enter a date">Enter a date</asp:RequiredFieldValidator>
-         <asp:UpdatePanel ID="UpdtPanelScheduleGridView" UpdateMode="Conditional" runat="server">
+         <asp:UpdatePanel ID="UpdtPanelScheduleGridView" UpdateMode="Conditional" runat="server" ChildrenAsTriggers="False">
            <Triggers>
              <asp:AsyncPostBackTrigger ControlID="TxtAppointmentSummary" EventName="TextChanged"/>
            </Triggers>

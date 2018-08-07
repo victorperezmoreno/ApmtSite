@@ -291,6 +291,9 @@ public partial class _Default : System.Web.UI.Page
           PopulateGridWithAppointmentData(bookingDateSelected);    
         }
         DetermineWhetherDateForBookingAppointmentSelectedIsToday();
+        UpdtPanelMessageCenter.Update();
+        UpdtPanelScheduleGridView.Update();
+        ScriptManager.RegisterStartupScript(this.Page, this.GetType(), "VanishMessageCenterApmt", "vanishMessageCenter();", true);
       }
     }
 
@@ -420,9 +423,9 @@ public partial class _Default : System.Web.UI.Page
       if ((scheduleDetails != null) && (scheduleDetails.Rows.Count > 0))
       {
         scheduleDetails.PrimaryKey = new DataColumn[] { scheduleDetails.Columns["Id"] };
-        bool flag = true;
-        while (flag == true)
-        {
+        //bool flag = true;
+        //while (flag == true)
+        //{
           foreach (DataRow currentServiceToBeBooked in dtTblServicesToBeBooked.Rows)
           {
             foreach (DataRow currentScheduledService in scheduleDetails.Rows)
@@ -439,16 +442,17 @@ public partial class _Default : System.Web.UI.Page
                 break;
               }
             }
-            if (timeSlotOccupiedByOtherService == true)
-            {
-              break;
-            }
+            //if (timeSlotOccupiedByOtherService == true)
+            //{
+            //  flag = false;
+            //  break;
+            //}
           }
-          if (timeSlotOccupiedByOtherService == true)
-          {
-            flag = false;
-          }
-        }
+          //if (timeSlotOccupiedByOtherService == true)
+          //{
+          //  flag = false;
+          //}
+        //}
       }
       return timeSlotOccupiedByOtherService;
     }
@@ -523,6 +527,7 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
+          DDLBeginTime.Enabled = true;
           DDLBeginTime.SelectedIndex = 0;
         }
       }
@@ -571,6 +576,8 @@ public partial class _Default : System.Web.UI.Page
         var Client = ClientHair.CreateCustomerObjectAndAssignData(customer);
         RegisterCustomer(Client);
         PopulateCustomerNamesComboBox(LoadCustomerNamesIntoDataTable());
+        UpdtPanelMessageCenter.Update();
+        ScriptManager.RegisterStartupScript(this.Page, this.GetType(), "VanishMessageCenterNewCust", "vanishMessageCenter();", true);
       }
     }
 
