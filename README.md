@@ -23,7 +23,7 @@ is to allow the customer to visit the website, select services and create appoin
   * Web Optimization package for webforms (in preparation for deployment)
   
 # Deployment:
-* Branch marked as Ready for deployment can be uploaded into a server with ISS and SQL server or Uploaded into MS azure.
+* Branch marked as AzureDeployment can be uploaded into a server with ISS and SQL server or Uploaded into MS azure.
 * Website can be also deployed in a PC/Mini Server, but IIS and SQL Server has to be installed.
 
   
