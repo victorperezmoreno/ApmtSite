@@ -6,6 +6,7 @@ using System.Web.UI.WebControls;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.Data;
+using ProjectStructs;
 /// <summary>
 /// Summary description for ClientHair
 /// </summary>
@@ -23,7 +24,7 @@ using System.Data;
     {
     }
 
-    public static ClientHair CreateCustomerObjectAndAssignData(ProjectStructs.Client customer)
+    public static ClientHair CreateCustomerObjectAndAssignData(DataStructs.Client customer)
     {
       var Client = new ClientHair();
       Client.IdCustomer = customer.id; //arbitrary as i do not need the id for inserting new customers

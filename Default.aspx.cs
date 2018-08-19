@@ -4,15 +4,23 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
+using Utilities;
+using Controller;
+using Model;
+using ProjectStructs;
 
 public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
       if (!IsPostBack)
-      {
-        TxtAppointmentSummary.Text = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime().ToShortDateString();    
-        PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());
+      { 
+        TxtAppointmentSummary.Text = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime().ToShortDateString();
+        // Populate schedule with today's appointments
+        var appointmentsGrid = new AppointmentsSchedule();
+        AssignFinalScheduleToDisplayToScheduleGridview(
+                appointmentsGrid.PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim()));
+       // PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());
         /*Filling up the checkboxlist, services, names and times dropdownlist*/
         LoadServicesAndStylistForAppointmentBooking();
         TxtAppointmentDate.Text = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime().ToShortDateString();
@@ -20,139 +28,13 @@ public partial class _Default : System.Web.UI.Page
       }
     }
 
-    private void PopulateGridWithAppointmentData(string dateSelected)
+    private void AssignFinalScheduleToDisplayToScheduleGridview(DataTable dtTableFinalScheduleToDisplay)
     {
-      var dtSetAppointmentInformation = LoadAppointmentInformation(dateSelected);
-      if (dtSetAppointmentInformation.Tables.Count == 0)
-      {
-        AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, AppConstants.LblMessage.AppointmentsDatasetEmpty);
-      }
-      else
-        {
-          if (dtSetAppointmentInformation.Tables.Count > 2)
-          {
-            CreateTableScheduleWhenAppointmentsBooked(dtSetAppointmentInformation);
-          }
-          else
-          {
-            CreateEmptyTableSchedule(dtSetAppointmentInformation);
-          }  
-        }
-    }
-
-    private DataSet LoadAppointmentInformation(string dateSelected)
-    {
-      var dtSetAppointmentsPerSpecificDate = new DataSet();
-      using (SqlConnection connection = HairStylistConnectionString.Connection())
-      {
-        try
-        {
-          //StoredPro_RetrieveAppointmentDetails       
-          var command = new SqlCommand("StoredPro_RetrieveAppointmentDetails", connection);
-          command.CommandType = CommandType.StoredProcedure;
-
-          command.Parameters.Add("@AppointmentDate", SqlDbType.NVarChar, 10).Value = dateSelected;
-          //Create adapter to pull appointment data from DB
-          var adapterAppointments = new SqlDataAdapter();
-          adapterAppointments.SelectCommand = command;
-
-          adapterAppointments.Fill(dtSetAppointmentsPerSpecificDate);
-          adapterAppointments.Dispose();
-          command.Dispose();
-        }
-        catch (System.Data.SqlClient.SqlException ex)
-        {
-          string str;
-          str = "Source:" + ex.Source;
-          str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
-        }
-      }
-      return dtSetAppointmentsPerSpecificDate;
-    }
-
-    private void CreateEmptyTableSchedule(DataSet dtSetWithNoAppointments)
-    {
-      //Create columns to display to user
-      var dtTableFinalScheduleToDisplay = AddColumnsToTableScheduleToDisplay(dtSetWithNoAppointments);
-      //Create the rows with time frames starting at 10 AM and ending at 7 PM
-      AddRowsToEmptyTableScheduleToDisplay(dtSetWithNoAppointments, dtTableFinalScheduleToDisplay);
-      //Bind data loaded in table to appointments grid
       grdViewSchedule.DataSource = dtTableFinalScheduleToDisplay;
       grdViewSchedule.DataBind();
     }
 
-    private static void AddRowsToEmptyTableScheduleToDisplay(DataSet dtSetAppointmentsData, DataTable dtTableFinalScheduleToDisplay)
-    {
-      var dtTableStylistList = dtSetAppointmentsData.Tables[0];
-      var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
-      DataRow drTimeSlotData;
-      for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
-      {
-        drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
-        drTimeSlotData["No"] = dtTableWorkingHours.Rows[timeSlot]["Id"];
-        drTimeSlotData["Time"] = dtTableWorkingHours.Rows[timeSlot]["StartTime"] + "-" + dtTableWorkingHours.Rows[timeSlot]["EndTime"];
-        //Add the row to datatable
-        dtTableFinalScheduleToDisplay.Rows.Add(drTimeSlotData);
-      }
-    }
-
-    //Create final datable to display to user
-    private void CreateTableScheduleWhenAppointmentsBooked(DataSet dtSetAppointmentsData)
-    {
-      //Create columns to display to user
-      var dtTableFinalScheduleToDisplay = AddColumnsToTableScheduleToDisplay(dtSetAppointmentsData);
-      //Create the rows with time frames starting at 10 AM and ending at 7 PM
-      AddRowsToTableScheduleWithDataToDisplay(dtSetAppointmentsData, dtTableFinalScheduleToDisplay);
-      //Bind data loaded in table to appointments grid
-      grdViewSchedule.DataSource = dtTableFinalScheduleToDisplay;
-      grdViewSchedule.DataBind();
-
-    }
-  
-    private static void AddRowsToTableScheduleWithDataToDisplay(DataSet dtSetAppointmentsData, DataTable dtTableFinalScheduleToDisplay)
-    {
-      var dtTableStylistList = dtSetAppointmentsData.Tables[0];
-      var dtTableWorkingHours = dtSetAppointmentsData.Tables[1];
-      var dtTableAppointmentsForAllStylists = dtSetAppointmentsData.Tables[2];
-      DataRow drTimeSlotData;
-      //int totalSlotsToCreateForSameCustomer = 0;
-      for (int timeSlot = 0; timeSlot < dtTableWorkingHours.Rows.Count; timeSlot++)
-      {
-        drTimeSlotData = dtTableFinalScheduleToDisplay.NewRow();
-        drTimeSlotData["No"] = dtTableWorkingHours.Rows[timeSlot]["Id"];
-        drTimeSlotData["Time"] = dtTableWorkingHours.Rows[timeSlot]["StartTime"] + "-" + dtTableWorkingHours.Rows[timeSlot]["EndTime"];
-        //Search appointments for each stylist
-        foreach (DataRow currentRowStylist in dtTableStylistList.Rows)
-        {
-          foreach (DataRow currentRowAppointments in dtTableAppointmentsForAllStylists.Rows)
-          {
-            if ((currentRowStylist["Stylist"].ToString() == currentRowAppointments["Stylist"].ToString()) && (dtTableWorkingHours.Rows[timeSlot]["StartTime"].ToString() == currentRowAppointments["StartTime"].ToString()))
-            {
-              //Add service and customer name to stylist column for each timeframe
-              drTimeSlotData[currentRowStylist["Stylist"].ToString()] = currentRowAppointments["Service"].ToString() + " - " + currentRowAppointments["FirstName"].ToString() + " " + currentRowAppointments["LastName"].ToString().Trim();
-              break;
-            }
-          }
-        }
-        //Add the row to datatable
-        dtTableFinalScheduleToDisplay.Rows.Add(drTimeSlotData);
-      }
-    }
-
-    private static DataTable AddColumnsToTableScheduleToDisplay(DataSet dtSetAppointmentsData)
-    {
-      var dtTableStylistList = dtSetAppointmentsData.Tables[0];
-      var dtTableFinalScheduleToDisplay = new DataTable();
-      dtTableFinalScheduleToDisplay.Columns.Add("No", typeof(int));
-      dtTableFinalScheduleToDisplay.Columns.Add("Time", typeof(string));
-      foreach (DataRow currentStylistColumn in dtTableStylistList.Rows)
-      {
-        dtTableFinalScheduleToDisplay.Columns.Add(currentStylistColumn["Stylist"].ToString(), typeof(string));
-      }
-      return dtTableFinalScheduleToDisplay;
-    }
-
+    
     //Load Services and Stylists from DB into group checkbox and dropdownbox
     private void LoadServicesAndStylistForAppointmentBooking()
     {
@@ -252,262 +134,84 @@ public partial class _Default : System.Web.UI.Page
       Page.Validate("BookingInfoGroup");
       if (Page.IsValid == true)
       {
-        int CustomerId = 0;
-        if (int.TryParse(CmbBxName.SelectedValue.ToString().Trim(), out CustomerId))
-          CustomerId = Int16.Parse(CmbBxName.SelectedValue.ToString().Trim());
+        var appointment = CreateAppointmentObjectAndAssignData();
+        //AppointmenttStructs.Appointment customerAppointment = CreateAHashOfNewAppointmentDataEntered();
+        int operationResultFromSavingAppointment = appointment.SaveAppointment(appointment); 
+   
+        DisplayResultMessageFromInsertingAppointment(operationResultFromSavingAppointment);
+        TxtAppointmentSummary.Text = appointment.DesiredDate;
+        var appointmentsGrid = new AppointmentsSchedule();
+        AssignFinalScheduleToDisplayToScheduleGridview(
+                appointmentsGrid.PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim()));
+      }
+      DetermineWhetherDateForBookingAppointmentSelectedIsToday();
+      UpdtPanelMessageCenter.Update();
+      UpdtPanelScheduleGridView.Update();
+      ScriptManager.RegisterStartupScript(this.Page, this.GetType(), "VanishMessageCenterApmt", "vanishMessageCenter();", true);
+    }
 
-        int HairStylistId = 0;
-        if (int.TryParse(DDLStylist.SelectedValue.ToString().Trim(), out HairStylistId))
-          HairStylistId = Int16.Parse(DDLStylist.SelectedValue.ToString().Trim());
+    //private AppointmentDetails CreateAppointmentObjectAndAssignData(AppointmenttStructs.Appointment structAppointmentData)
+    //{
+    //  var appointment = new AppointmentDetails();
+    //  appointment.Id = structAppointmentData.id;
+    //  appointment.DesiredDate = structAppointmentData.desiredDate;
+    //  appointment.StartingTime = structAppointmentData.startingTime;
+    //  appointment.EndingTime = "";
+    //  appointment.Services = structAppointmentData.services;
+    //  appointment.HairStylist = structAppointmentData.hairStylist;
+    //  appointment.DetermineCustomerHairLenght(structAppointmentData.hairLenght);
+    //  appointment.IdCustomer = structAppointmentData.idCustomer;
+    //  appointment.RegistrationDate = structAppointmentData.registrationDate;
+    //  appointment.RegisteredBy = structAppointmentData.registeredBy;
+    //  appointment.Cancelled = structAppointmentData.cancelled;
+    //  appointment.CancellationReason = "";
 
-        var Appointment = new AppointmentDetails();
-        Appointment.Id = 1; //Arbitrary as I do not need the Id for inserting new services
-        Appointment.DesiredDate = TxtAppointmentDate.Text.Trim();
-        Appointment.StartingTime = DDLBeginTime.SelectedItem.Text.ToString().Trim();
-        Appointment.EndingTime = ""; //Arbitrary as I do not need the EndingTime for inserting
-        Appointment.DetermineServicesToBePerformed(ChkBxListServices);
-        Appointment.HairStylist = HairStylistId;
-        Appointment.DetermineCustomerHairLenght(DDLHairLength.SelectedIndex);
-        Appointment.IdCustomer = CustomerId;
-        Appointment.RegistrationDate = DateTime.Now; //For initialization purposes
-        Appointment.RegisteredBy = 1; //Arbitrary until we decide how to allow access to app
-        Appointment.Cancelled = false; //For initialization purposes
-        Appointment.CancellationReason = ""; //For initialization purposes
+    //  return appointment;
+    //}
 
-        /* Get schedule for stylist on date picked by user, also select services timeframe*/
-        var dtTableServicesDurationAndProcessingTime = RetrieveServicesDurationAndProcessingTime(Appointment);
-        //Create DataTable for services to be booked for a customer.
-        var dtTableServicesToBeBooked = BuildServicesSchedule(Appointment, dtTableServicesDurationAndProcessingTime);
-        var dtTableStylistSchedule = RetrieveStylistSchedule(Appointment);
-        
-        if (DetermineTimeSlotsAvailabilityForServicesToBeBooked(dtTableStylistSchedule, dtTableServicesToBeBooked))
-        {
+    private AppointmentDetails CreateAppointmentObjectAndAssignData()
+    {
+      int CustomerId = 0;
+      if (int.TryParse(CmbBxName.SelectedValue.ToString().Trim(), out CustomerId))
+        CustomerId = Int16.Parse(CmbBxName.SelectedValue.ToString().Trim());
+
+      int HairStylistId = 0;
+      if (int.TryParse(DDLStylist.SelectedValue.ToString().Trim(), out HairStylistId))
+        HairStylistId = Int16.Parse(DDLStylist.SelectedValue.ToString().Trim());
+
+      var customerAppointment = new AppointmentDetails();
+      customerAppointment.Id = 1;//arbitrary as i do not need the id for inserting new customers
+      customerAppointment.DesiredDate = TxtAppointmentDate.Text.Trim();
+      customerAppointment.StartingTime = DDLBeginTime.SelectedItem.Text.ToString().Trim();
+      customerAppointment.EndingTime = ""; //Arbitrary as I do not need the EndingTime for inserting
+      customerAppointment.Services = ClassLibrary.SelectedServicesAppendedString(ChkBxListServices);
+      customerAppointment.HairStylist = (DDLStylist.SelectedIndex);
+      customerAppointment.DetermineCustomerHairLenght(DDLHairLength.SelectedIndex);
+      customerAppointment.IdCustomer = CustomerId;
+      customerAppointment.RegistrationDate = ClassLibrary.RetrieveEasternTimeZoneFromUTCTime(); //For initialization purposes
+      customerAppointment.RegisteredBy = 1; //Arbitrary until we decide how to allow access to app
+      customerAppointment.Cancelled = false; //For initialization purposes
+      customerAppointment.CancellationReason = ""; //For initialization purposes
+      return customerAppointment;
+    }
+
+    private void DisplayResultMessageFromInsertingAppointment(int operationResult)
+    {
+      switch (operationResult)
+      {
+        //Error in Stored Procedure when inserting
+        case 0:
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.SuccessForecolor, AppConstants.LblMessage.SuccessBackgroundColor, "Appointment Booked!");
+          break;
+        //Appointment Booked! 
+        case 1:
+          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, "Error in Stored Procedure when inserting");
+          break;
+        //Please select another time
+        case 2:
           AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, "Please select another time");
-        }
-        else
-        {
-          string bookingDateSelected = BookServices(dtTableServicesToBeBooked);
-          TxtAppointmentSummary.Text = bookingDateSelected;
-          PopulateGridWithAppointmentData(bookingDateSelected);    
-        }
-        DetermineWhetherDateForBookingAppointmentSelectedIsToday();
-        UpdtPanelMessageCenter.Update();
-        UpdtPanelScheduleGridView.Update();
-        ScriptManager.RegisterStartupScript(this.Page, this.GetType(), "VanishMessageCenterApmt", "vanishMessageCenter();", true);
+          break;
       }
-    }
-
-    private DataTable RetrieveServicesDurationAndProcessingTime(AppointmentDetails customerAppointment)
-    {
-      var dtTableServicesDetails = new DataTable();
-      /*Placed connection string in a class in App_Code  to improve DB connection callings*/
-      using (SqlConnection connection = HairStylistConnectionString.Connection())
-      {
-        try
-        {
-          var command = new SqlCommand("StoredPro_RetrieveServiceDurationAndProcessingTime", connection);
-          command.CommandType = CommandType.StoredProcedure;
-          command.Parameters.Add("@HairLenght", SqlDbType.TinyInt).Value = (int)customerAppointment.CustomerHairLength;
-          
-          var adapterServicesDetails = new SqlDataAdapter();
-          adapterServicesDetails.SelectCommand = command;
-
-          adapterServicesDetails.Fill(dtTableServicesDetails);
-          dtTableServicesDetails.PrimaryKey = new DataColumn[] { dtTableServicesDetails.Columns["Id"] };
-          command.Dispose();
-          adapterServicesDetails.Dispose();
-        }
-        catch (System.Data.SqlClient.SqlException ex)
-        {
-          string str;
-          str = "Source:" + ex.Source;
-          str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
-        }
-      }
-      return dtTableServicesDetails;
-    }
-
-    private static DataTable BuildServicesSchedule(AppointmentDetails appointmentData, DataTable dtTblServicesDuration)
-    {
-      //Datable with services to be performed and proposed schedule
-      var dtTblServicesToBeBooked = CreateDataTableForServicesToBeBooked();
-      ProjectStructs.TimeSlotsStartingAndEndingTimes currentTimeSlotService;
-      currentTimeSlotService.serviceStartTime = TimeSpan.ParseExact(appointmentData.StartingTime, "g", null);
-      currentTimeSlotService.serviceEndTime = TimeSpan.Zero;
-
-      foreach (char c in appointmentData.Services)
-      {
-        byte serviceNumber = (byte)Char.GetNumericValue(c);
-        DataRow drService = dtTblServicesDuration.Rows.Find(serviceNumber);
-        int serviceDuration = ReturnServiceDurationAccordingToHairLenght(appointmentData, drService);
-        
-        TimeSpan minutesServiceDuration = new TimeSpan(0, serviceDuration, 0);
-        int totalSlotsToCreateForSameCustomer =  (int)minutesServiceDuration.TotalMinutes / AppConstants.ScheduleTimeSlot.TimeSlotToDisplayInScheduleInMinutes;
-        for (int timeSlotCounter = 1; timeSlotCounter <= totalSlotsToCreateForSameCustomer; timeSlotCounter++)
-        {
-          //Calculate end time based on services duration time
-          currentTimeSlotService.serviceEndTime = currentTimeSlotService.serviceStartTime + new TimeSpan(0, AppConstants.ScheduleTimeSlot.TimeSlotToDisplayInScheduleInMinutes, 0);
-          appointmentData.StartingTime = string.Format("{0:D2}:{1:D2}", currentTimeSlotService.serviceStartTime.Hours, currentTimeSlotService.serviceStartTime.Minutes);
-          appointmentData.EndingTime = string.Format("{0:D2}:{1:D2}", currentTimeSlotService.serviceEndTime.Hours, currentTimeSlotService.serviceEndTime.Minutes);
-          //Add services details row to datable
-          dtTblServicesToBeBooked.Rows.Add(appointmentData.DesiredDate, appointmentData.StartingTime,
-            appointmentData.EndingTime, serviceNumber, appointmentData.HairStylist,
-            (int)appointmentData.CustomerHairLength, appointmentData.IdCustomer,
-            ClassLibrary.RetrieveEasternTimeZoneFromUTCTime(), appointmentData.RegisteredBy, appointmentData.Cancelled,
-            appointmentData.CancellationReason);
-          currentTimeSlotService.serviceStartTime = currentTimeSlotService.serviceEndTime;
-        }
-        
-        SetupStartingTimeForNextServiceToBeBooked(currentTimeSlotService, drService);
-      }
-      return dtTblServicesToBeBooked;
-    }
-
-    private static int ReturnServiceDurationAccordingToHairLenght(AppointmentDetails appointmentData, DataRow drService)
-    {
-      int serviceDuration = 0;
-
-      if ((int)appointmentData.CustomerHairLength == 1)
-        serviceDuration = Int32.Parse(drService["DurationAboveShoulder"].ToString());
-      else
-        serviceDuration = Int32.Parse(drService["DurationBelowShoulder"].ToString());
-
-      return serviceDuration;
-    }
-
-    private static void SetupStartingTimeForNextServiceToBeBooked(ProjectStructs.TimeSlotsStartingAndEndingTimes nextTimeSlotService, DataRow drService)
-    {
-      int processingTime = 0;
-      if (Int32.TryParse(drService["ProcessingTime"].ToString(), out processingTime))
-        processingTime = Int32.Parse(drService["ProcessingTime"].ToString());
-
-      nextTimeSlotService.serviceStartTime = nextTimeSlotService.serviceEndTime + new TimeSpan(0, processingTime, 0);
-    } 
-
-    private DataTable RetrieveStylistSchedule(AppointmentDetails customerAppointment)
-    {
-      var dtTableStylistAppointments = new DataTable();
-      /*Placed connection string in a class in App_Code  to improve DB connection callings*/
-      using (SqlConnection connection = HairStylistConnectionString.Connection())
-      {
-        try
-        {
-          var command = new SqlCommand("StoredPro_RetrieveStylistSchedule", connection);
-          command.CommandType = CommandType.StoredProcedure;
-          command.Parameters.Add("@AppointmentDate", SqlDbType.NVarChar, 10).Value = customerAppointment.DesiredDate;
-          command.Parameters.Add("@StylistId", SqlDbType.TinyInt).Value = customerAppointment.HairStylist;
-          
-          var adapterStylistAppointments = new SqlDataAdapter();
-          adapterStylistAppointments.SelectCommand = command;
-
-          adapterStylistAppointments.Fill(dtTableStylistAppointments);
-          command.Dispose();
-          adapterStylistAppointments.Dispose();
-        }
-        catch (System.Data.SqlClient.SqlException ex)
-        {
-          string str;
-          str = "Source:" + ex.Source;
-          str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);
-        }
-      }
-      return dtTableStylistAppointments;
-    }
-
-    private bool DetermineTimeSlotsAvailabilityForServicesToBeBooked(DataTable scheduleDetails, DataTable dtTblServicesToBeBooked)
-    {
-      bool timeSlotOccupiedByOtherService = false;
-      //Check whether the schedule for new services do not collide with services to perform during the day
-      if ((scheduleDetails != null) && (scheduleDetails.Rows.Count > 0))
-      {
-        scheduleDetails.PrimaryKey = new DataColumn[] { scheduleDetails.Columns["Id"] };
-        //bool flag = true;
-        //while (flag == true)
-        //{
-          foreach (DataRow currentServiceToBeBooked in dtTblServicesToBeBooked.Rows)
-          {
-            foreach (DataRow currentScheduledService in scheduleDetails.Rows)
-            {
-              if (currentServiceToBeBooked["StartTime"].ToString() == currentScheduledService["StartTime"].ToString())
-              {
-                timeSlotOccupiedByOtherService = true;
-                //foreach (DataRow newTimeSlotService in dtTblScheduledServices.Rows)
-                //{
-
-                //  //Adicionar 30 mins to starting time? O crear una lista de timeslots disponibles
-                //  //newTimeSlotService["StartTime"] = newTimeSlotService["StartTime"];
-                //}
-                break;
-              }
-            }
-            //if (timeSlotOccupiedByOtherService == true)
-            //{
-            //  flag = false;
-            //  break;
-            //}
-          }
-          //if (timeSlotOccupiedByOtherService == true)
-          //{
-          //  flag = false;
-          //}
-        //}
-      }
-      return timeSlotOccupiedByOtherService;
-    }
-
-    private static DataTable CreateDataTableForServicesToBeBooked()
-    {
-      var dtTblForServicesToBeBooked = new DataTable();
-
-      dtTblForServicesToBeBooked.Columns.Add("AppointmentDate", typeof(DateTime));
-      dtTblForServicesToBeBooked.Columns.Add("StartTime", typeof(string));
-      dtTblForServicesToBeBooked.Columns.Add("EndTime", typeof(string));
-      dtTblForServicesToBeBooked.Columns.Add("IdService", typeof(int));
-      dtTblForServicesToBeBooked.Columns.Add("IdStylist", typeof(int));
-      dtTblForServicesToBeBooked.Columns.Add("IdHairLength", typeof(int));
-      dtTblForServicesToBeBooked.Columns.Add("IdCustomer", typeof(int));
-      dtTblForServicesToBeBooked.Columns.Add("RegistrationDate", typeof(DateTime));
-      dtTblForServicesToBeBooked.Columns.Add("RegisteredBy", typeof(int));
-      dtTblForServicesToBeBooked.Columns.Add("Cancelled", typeof(bool));
-      dtTblForServicesToBeBooked.Columns.Add("CancellationReason", typeof(string));
-      return dtTblForServicesToBeBooked;
-    }
-
-    private string BookServices(DataTable dtTblServicesToBeBooked)
-    {
-      string appointmentDateSelected ="";
-      using (SqlConnection connection = HairStylistConnectionString.Connection())
-      {
-        try
-        {
-          //Insert services data in Database
-          var command = new SqlCommand("StoredPro_InsertAppointmentsBatch", connection);
-          command.CommandType = CommandType.StoredProcedure;
-          command.Parameters.Add("@AppointmentDetails", SqlDbType.Structured).Value = dtTblServicesToBeBooked;
-          command.Parameters.Add("@OperationStatus", SqlDbType.Bit).Direction = ParameterDirection.Output;
-
-          appointmentDateSelected = dtTblServicesToBeBooked.Rows[0].Field<DateTime>("AppointmentDate").ToShortDateString();
-          connection.Open();
-          command.ExecuteNonQuery(); 
-          if (!(bool)command.Parameters["@OperationStatus"].Value)
-          {
-            AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, "SP Error booking appointment");        
-          }
-
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.SuccessForecolor, AppConstants.LblMessage.SuccessBackgroundColor, "Appointment Booked!");        
-          command.Dispose();
-        }
-        catch (System.Data.SqlClient.SqlException ex)
-        {
-          string str;
-          str = "Source:" + ex.Source;
-          str += "\n" + "Message:" + ex.Message;
-          AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, str);        
-        }
-      }
-      return appointmentDateSelected;
     }
 
     protected void TxtAppointmentDateChange(object sender, EventArgs e)
@@ -572,8 +276,9 @@ public partial class _Default : System.Web.UI.Page
       Page.Validate("RegistrationInfoGroup");
       if (Page.IsValid == true)
       {
-        ProjectStructs.Client customer = CreateAHashOfNewCustomerDataEntered();
-        var Client = ClientHair.CreateCustomerObjectAndAssignData(customer);
+        DataStructs.Client customer = CreateAHashOfNewCustomerDataEntered();
+        var Client =   ClientHair.CreateCustomerObjectAndAssignData(customer);
+        //int operationResultFromInsertingCustomer = Falta por implementar
         RegisterCustomer(Client);
         PopulateCustomerNamesComboBox(LoadCustomerNamesIntoDataTable());
         UpdtPanelMessageCenter.Update();
@@ -581,9 +286,9 @@ public partial class _Default : System.Web.UI.Page
       }
     }
 
-    private ProjectStructs.Client CreateAHashOfNewCustomerDataEntered()
+    private DataStructs.Client CreateAHashOfNewCustomerDataEntered()
     {
-      ProjectStructs.Client customer;
+      DataStructs.Client customer;
       customer.id = 1;//arbitrary as i do not need the id for inserting new customers
       customer.firstName = TxtFirstName.Text.ToLower().Trim();
       customer.lastName = TxtLastName.Text.ToLower().Trim();
@@ -628,7 +333,7 @@ public partial class _Default : System.Web.UI.Page
         case 1:
           AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.ErrorForecolor, AppConstants.LblMessage.ErrorBackgroundColor, messageFromInserting);
           break;
-        //Customer already exists in Database
+        //Customer already exists in Database or Timeslot already occupied
         case 2:
           AssignMessageToLabelWithResultFromOperation(AppConstants.LblMessage.WarningForecolor, AppConstants.LblMessage.WarningBackgroundColor, messageFromInserting);
           break;
@@ -713,6 +418,23 @@ public partial class _Default : System.Web.UI.Page
 
     protected void TxtSummaryDateChange(object sender, EventArgs e)
     {
-      PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim());
+      // Update schedule according to date selected by user
+      var appointmentsGrid = new AppointmentsSchedule();
+      AssignFinalScheduleToDisplayToScheduleGridview(
+                appointmentsGrid.PopulateGridWithAppointmentData(TxtAppointmentSummary.Text.Trim())); 
+    }
+
+    private void Page_Error(object sender, EventArgs e)
+    {
+      // Get last error from the server.
+      Exception exc = Server.GetLastError();
+
+      // Handle specific exception.
+      if (exc is InvalidOperationException)
+      {
+        // Pass the error on to the error page.
+        Server.Transfer("~/Errors/ErrorPage.aspx?handler=Page_Error%20-%20Default.aspx",
+            true);
+      }
     }
 }
